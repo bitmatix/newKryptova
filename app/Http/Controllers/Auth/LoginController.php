@@ -131,7 +131,7 @@ class LoginController extends Controller
                 }
 
                 if($userData->otp != '' || $userData->otp != NULL) {
-                    return redirect()->route('paypound-otp');
+                    return redirect()->route('kryptova-otp');
                 }
 
                 $response = $this->sendOtpSMS($userData);
@@ -141,7 +141,7 @@ class LoginController extends Controller
                     \Session::put('password', $request->input('password'));
                     \Session::forget('error');
                     Session::put('success','Enter the OTP received on your registered email id.');
-                    return redirect()->route('paypound-otp');
+                    return redirect()->route('kryptova-otp');
                 } else {
                     Session::put('error','Something went wrong. problem in OTP generation.');
                     return view('auth.login');
@@ -153,22 +153,6 @@ class LoginController extends Controller
             }
         }else{
             return back()->withErrors(['active'=>'Your account has not been activated till now.']);
-        }
-    }
-
-    public function addMobileNo(Request $request)
-    {
-        $this->validate($request, [
-            'mobile_no' => 'required|unique:users',
-            'country_code' => 'required',
-        ]);
-        
-        $updateUser = User::where('id', $request->id)->update(['country_code' => $request->country_code, 'mobile_no' => $request->mobile_no]);
-        if($updateUser) {
-            Session::put('success','Your mobile number has beed added successfully , you will receive the OTP at the time of your login on your mobile number as well as email id.');
-            return view('auth.login');
-        } else {
-            return back()->with('error','Something went wront with adding your mobile no., please try again.');
         }
     }
 
@@ -193,20 +177,20 @@ class LoginController extends Controller
                     ->send(new OtpMail($content));
                 \Session::put('success', 'OTP has been successfully sent. Please check your registered mail.');
             } catch (\Exception $e) {
-                \Session::put('error', 'Mail not sent, Please contact PayPound for support.');
+                \Session::put('error', 'Mail not sent, Please contact Kryptova for support.');
                 return redirect()->back();
             }
-            return redirect()->route('paypound-otp');
+            return redirect()->route('kryptova-otp');
         }
 
         $response = $this->sendOtpSMS($user);
 
         if($response == true) {
             \Session::put('success', 'OTP has been resent on your registered email id.');
-            return redirect()->route('paypound-otp');
+            return redirect()->route('kryptova-otp');
         } else {
             \Session::put('error', 'OTP send fail, Please try again.');
-            return redirect()->route('paypound-otp');
+            return redirect()->route('kryptova-otp');
         }
     }
 
@@ -246,14 +230,14 @@ class LoginController extends Controller
 
             return redirect()->back();
         }
-
+        $otp = implode("",$request->otp);
         $userData = User::where(['email'=>\Session::get('email')])->first();
 
         if(empty($userData)){
             \Session::put('error', 'Wrong OTP , Please try again');
             return redirect()->back();
         }
-        if(isset($userData->otp) && $userData->otp != $request->otp){
+        if(isset($userData->otp) && $userData->otp != $otp){
             \Session::put('error', 'Wrong OTP , Please try again');
             return redirect()->back();
         }

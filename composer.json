@@ -13,6 +13,7 @@
         "fruitcake/laravel-cors": "^2.0",
         "guzzlehttp/guzzle": "^6.3.1|^7.0.1",
         "laravel/framework": "^7.29",
+        "laravel/sanctum": "^2.10",
         "laravel/tinker": "^2.5",
         "laravel/ui": "^2.1",
         "laravelcollective/html": "^6.1",
@@ -26,7 +27,8 @@
         "anhskohbo/no-captcha": "^3.3",
         "cartalyst/stripe-laravel": "^12.0",
         "doctrine/dbal": "2.*",
-        "dompdf/dompdf": "^0.8.5"
+        "dompdf/dompdf": "^0.8.5",
+        "genealabs/laravel-model-caching": "^0.8.10"
     },
     "require-dev": {
         "facade/ignition": "^2.0",

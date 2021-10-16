@@ -44,7 +44,31 @@ return [
         'api' => [
             'driver' => 'token',
             'provider' => 'users',
-            'hash' => false,
+        ],
+
+        'admin' => [
+            'driver' => 'session',
+            'provider' => 'admins',
+        ],
+
+        'bankUser' => [
+            'driver' => 'session',
+            'provider' => 'bank_users',
+        ],
+
+        'reportuser' => [
+            'driver' => 'session',
+            'provider' => 'reportusers',
+        ],
+        
+        'agentUser' => [
+            'driver' => 'session',
+            'provider' => 'agent_users',
+        ],
+
+        'subUsers' => [
+            'driver' => 'session',
+            'provider' => 'sub_users',
         ],
     ],
 
@@ -66,10 +90,36 @@ return [
     */
 
     'providers' => [
+        'sub_users' => [
+            'driver' => 'eloquent',
+            'model' => App\SubUsers::class,
+        ],
+
         'users' => [
             'driver' => 'eloquent',
             'model' => App\User::class,
         ],
+
+        'admins' => [
+            'driver' => 'eloquent',
+            'model' => App\Admin::class,
+        ],
+
+        'reportusers' => [
+            'driver' => 'eloquent',
+            'model' => App\ReportUser::class,
+        ],
+
+
+        'bank_users' => [
+            'driver' => 'eloquent',
+            'model' => App\Bank::class,
+        ],
+        
+        'agent_users' => [
+            'driver' => 'eloquent',
+            'model' => App\Agent::class,
+        ]
 
         // 'users' => [
         //     'driver' => 'database',

@@ -101,7 +101,7 @@ class BankUserAuthController extends Controller
                     \Session::put('email', $request->input('email'));
                     \Session::put('password', $request->input('password'));
                     Session::put('success', 'Enter the OTP received on your registered email id.');
-                    return redirect()->route('bank.paypound-otp');
+                    return redirect()->route('bank.kryptova-otp');
                 }
             }
         } else {
@@ -113,7 +113,7 @@ class BankUserAuthController extends Controller
     {
         $OTP = rand(111111, 999999);
         $generateOTP = Bank::where(['email' => $user->email])->update(['otp' => $OTP]);
-        $message = "Use " . $OTP . " to sign in to your PAYPOUND CRM account. Never forward this code.";
+        $message = "Use " . $OTP . " to sign in to your Kryptova CRM account. Never forward this code.";
 
         $content = [
             'otp' => $OTP,
@@ -140,7 +140,7 @@ class BankUserAuthController extends Controller
 
         if (empty($user)) {
             \Session::put('error', 'OTP send fail, Please try again.');
-            return redirect()->route('bank.paypound-otp');
+            return redirect()->route('bank.kryptova-otp');
         }
 
         $OTP = rand(111111, 999999);
@@ -151,10 +151,10 @@ class BankUserAuthController extends Controller
         // if($response->type == 'success') {
         if ($response == true) {
             \Session::put('success', 'OTP has been successfully sent. Please check your registered mail.');
-            return redirect()->route('bank.paypound-otp');
+            return redirect()->route('bank.kryptova-otp');
         } else {
             \Session::put('error', 'OTP send fail, Please try again.');
-            return redirect()->route('bank.paypound-otp');
+            return redirect()->route('bank.kryptova-otp');
         }
     }
 

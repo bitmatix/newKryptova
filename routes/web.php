@@ -27,20 +27,18 @@ Route::get('user-activate/{id}', 'ApplyNowController@verifyUserEmail')->name('us
 Route::get('user/confirm-mail-active', 'ApplyNowController@confirmMailActive')->name('user/confirm-mail-active');
 Route::get('user-email-activate', 'ApplyNowController@verifyUserChangeEmail')->name('user-email-activate');
 
-Route::get('paypound-otp', 'Auth\LoginController@otpform')->name('paypound-otp');
+Route::get('kryptova-otp', 'Auth\LoginController@otpform')->name('kryptova-otp');
 Route::get('resend-otp', 'Auth\LoginController@resendotp')->name('resend-otp');
-Route::post('paypound-otp-store', 'Auth\LoginController@checkotp')->name('paypound-otp-store');
-Route::post('paypound-mobile-no-store', 'Auth\LoginController@addMobileNo')->name('paypound-mobile-no-store');
+Route::post('kryptova-otp-store', 'Auth\LoginController@checkotp')->name('kryptova-otp-store');
 
 /*********************User Register Module End *************************************/
 
 /*********************Admin Routes Module End *************************************/
 Route::get('admin/login', 'Auth\AdminAuthController@getLogin')->name('admin/login');
 Route::post('admin/login', 'Auth\AdminAuthController@postLogin')->name('admin/login');
-Route::get('admin/paypound-otp', 'Auth\AdminAuthController@otpform')->name('admin.paypound-otp');
+Route::get('admin/kryptova-otp', 'Auth\AdminAuthController@otpform')->name('admin.kryptova-otp');
 Route::get('admin/resend-otp', 'Auth\AdminAuthController@resendotp')->name('admin.resend-otp');
-Route::post('admin/paypound-otp-store', 'Auth\AdminAuthController@checkotp')->name('admin.paypound-otp-store');
-Route::post('admin/paypound-mobile-no-store', 'Auth\AdminAuthController@addMobileNo')->name('admin.paypound-mobile-no-store');
+Route::post('admin/kryptova-otp-store', 'Auth\AdminAuthController@checkotp')->name('admin.kryptova-otp-store');
 Route::get('admin/logout', 'Auth\AdminAuthController@logout')->name('admin/logout');
 
 Route::get('admin/password/reset', 'Auth\AdminAuthController@adminForgetPassword')->name('admin-password-reset');

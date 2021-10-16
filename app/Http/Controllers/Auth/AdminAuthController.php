@@ -172,11 +172,11 @@ class AdminAuthController extends AdminController
 
                 \Mail::to($request->input('email'))->send(new AdminOtpMail($admin));
                 \Session::put('success', 'Enter the OTP received on your email id.');
-                return redirect()->route('admin.paypound-otp');
+                return redirect()->route('admin.kryptova-otp');
                 try {
                 } catch (\Exception $e) {
                     \Session::put('error', 'Mail has not been sent due to some technical error. Please resend the OTP.');
-                    return redirect()->route('admin.paypound-otp');
+                    return redirect()->route('admin.kryptova-otp');
                 }
 
                 $response = $this->sendOtpSMS($userData);
@@ -186,7 +186,7 @@ class AdminAuthController extends AdminController
                     \Session::put('email', $request->input('email'));
                     \Session::put('password', $request->input('password'));
                     Session::put('success', 'You will receive the OTP at the time of your login on your mobile number as well as email id.');
-                    return redirect()->route('admin.paypound-otp');
+                    return redirect()->route('admin.kryptova-otp');
                 } else {
                     Session::put('error', 'Something went wrong. problem in OTP generation.');
                     return view('auth.adminLogin');
@@ -196,23 +196,6 @@ class AdminAuthController extends AdminController
             }
         } else {
             return back()->with('error', 'Your email is not registered with us.');
-        }
-    }
-
-    public function addMobileNo(Request $request)
-    {
-        $this->validate($request, [
-            'mobile_no' => 'required|unique:admins',
-            'country_code' => 'required',
-        ]);
-        // $response = $this->sendOtpSMS($user);
-        $updateUser = Admin::where('id', $request->id)->update(['country_code' => $request->country_code, 'mobile_no' => $request->mobile_no]);
-        if ($updateUser) {
-            // $user = Admin::where('id',$request->id)->first();s
-            Session::put('success', 'Your mobile number has beed added successfully , you will receive the OTP at the time of your login on your mobile number as well as email id.');
-            return view('auth.adminLogin');
-        } else {
-            return back()->with('error', 'Something went wront with adding your mobile no., please try again.');
         }
     }
 
@@ -241,10 +224,10 @@ class AdminAuthController extends AdminController
         // if($response->type == 'success') {
         if ($response == true) {
             \Session::put('success', 'OTP has been resent on your email id.');
-            return redirect()->route('admin.paypound-otp');
+            return redirect()->route('admin.kryptova-otp');
         } else {
             \Session::put('error', 'OTP send fail, Please try again.');
-            return redirect()->route('admin.paypound-otp');
+            return redirect()->route('admin.kryptova-otp');
         }
     }
 
@@ -286,8 +269,10 @@ class AdminAuthController extends AdminController
             return redirect()->back();
         }
 
+        $otp = implode("",$request->otp);
+
         $userData = Admin::where('email', \Session::get('email'))->first();
-        if (isset($userData->otp) && $userData->otp != $request->otp) {
+        if (isset($userData->otp) && $userData->otp != $otp) {
 
             \Session::put('error', 'Wrong OTP , Please try again');
             return redirect()->back();
@@ -328,7 +313,7 @@ class AdminAuthController extends AdminController
     {
         $OTP = rand(111111, 999999);
         $generateOTP = Admin::where('email', $user->email)->update(['otp' => $OTP]);
-        $message = "Use " . $OTP . " to sign in to your PAYPOUND CRM account. Never forward this code.";
+        $message = "Use " . $OTP . " to sign in to your Kryptova CRM account. Never forward this code.";
 
         $content = [
             'otp' => $OTP,

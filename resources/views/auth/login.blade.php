@@ -35,7 +35,7 @@
 					<!--begin::Wrapper-->
 					<div class="w-lg-500px bg-body rounded shadow-sm p-10 p-lg-15 mx-auto">
 						<!--begin::Form-->
-						<form action="{{ route('login') }}" id="login-form" method="post" class="form w-100" novalidate="novalidate">
+						<form action="{{ route('login') }}" id="kt_sign_in_form" method="post" class="form w-100" novalidate="novalidate">
                         {!! csrf_field() !!}
 							<!--begin::Heading-->
 							<div class="text-center mb-10">
@@ -48,35 +48,6 @@
 								<!--end::Link-->
 							</div>
 							<!--begin::Heading-->
-							<div class="fv-row mb-10">
-								@if($errors->has('active'))
-                                <div class="wd-100p alert alert-success alert-dismissible fade show"
-                                    role="alert">
-                                    {!! $errors->first('active') !!}
-                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                        <span aria-hidden="true">×</span>
-                                    </button>
-                                </div>
-                                @endif
-                                @if(\Session::get('success'))
-                                <div class="alert alert-success alert-dismissible fade show" role="alert">
-                                    {!! \Session::get('success') !!}
-                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                        <span aria-hidden="true">×</span>
-                                    </button>
-                                </div>
-                                @endif
-                                {{ \Session::forget('success') }}
-                                @if(\Session::get('error'))
-                                <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                                    {!! \Session::get('error') !!}
-                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                        <span aria-hidden="true">×</span>
-                                    </button>
-                                </div>
-                                @endif
-                                {{ \Session::forget('error') }}
-							</div>
 							<!--begin::Input group-->
 							<div class="fv-row mb-10">
 								<!--begin::Label-->
@@ -123,21 +94,6 @@
 									<span class="spinner-border spinner-border-sm align-middle ms-2"></span></span>
 								</button>
 								<!--end::Submit button-->
-								<!--begin::Separator-->
-								<div class="text-center text-muted text-uppercase fw-bolder mb-5">or</div>
-								<!--end::Separator-->
-								<!--begin::Google link-->
-								<a href="#" class="btn btn-flex flex-center btn-light btn-lg w-100 mb-5">
-								<img alt="Logo" src="{{ storage_asset('theme/assets/media/svg/brand-logos/google-icon.svg') }}" class="h-20px me-3" />Continue with Google</a>
-								<!--end::Google link-->
-								<!--begin::Google link-->
-								<a href="#" class="btn btn-flex flex-center btn-light btn-lg w-100 mb-5">
-								<img alt="Logo" src="{{ storage_asset('theme/assets/media/svg/brand-logos/facebook-4.svg') }}" class="h-20px me-3" />Continue with Facebook</a>
-								<!--end::Google link-->
-								<!--begin::Google link-->
-								<a href="#" class="btn btn-flex flex-center btn-light btn-lg w-100">
-								<img alt="Logo" src="{{ storage_asset('theme/assets/media/svg/brand-logos/apple-black.svg') }}" class="h-20px me-3" />Continue with Apple</a>
-								<!--end::Google link-->
 							</div>
 							<!--end::Actions-->
 						</form>
@@ -150,9 +106,9 @@
 				<div class="d-flex flex-center flex-column-auto p-10">
 					<!--begin::Links-->
 					<div class="d-flex align-items-center fw-bold fs-6">
-						<a href="https://keenthemes.com" class="text-muted text-hover-primary px-2">About</a>
-						<a href="mailto:support@keenthemes.com" class="text-muted text-hover-primary px-2">Contact</a>
-						<a href="https://1.envato.market/EA4JP" class="text-muted text-hover-primary px-2">Contact Us</a>
+						<a href="#" class="text-muted text-hover-primary px-2">About</a>
+						<a href="#" class="text-muted text-hover-primary px-2">Contact</a>
+						<a href="#" class="text-muted text-hover-primary px-2">Contact Us</a>
 					</div>
 					<!--end::Links-->
 				</div>
@@ -161,7 +117,7 @@
 			<!--end::Authentication - Sign-in-->
 		</div>
 		<!--end::Main-->
-		<!-- <script>var hostUrl = "assets/";</script> -->
+		<script>var hostUrl = "<?php echo storage_asset('theme/assets/'); ?>";</script>
 		<!--begin::Javascript-->
 		<!--begin::Global Javascript Bundle(used by all pages)-->
 		<script src="{{ storage_asset('theme/assets/plugins/global/plugins.bundle.js') }}"></script>
@@ -175,9 +131,46 @@
 		<script src="https://www.google.com/recaptcha/api.js"></script>
 	    <script>
 	        function onSubmit(token) {
-	        document.getElementById("login-form").submit();
+	        document.getElementById("kt_sign_in_form").submit();
 	    }
 	    </script>
+
+	    @if(\Session::get('error'))
+        <script type="text/javascript">
+        	Swal.fire({
+					text:"<?php echo Session::get('error');?>",
+					icon:"error",buttonsStyling:!1,
+					confirmButtonText:"Ok, got it!",
+					customClass:{confirmButton:"btn btn-primary"}
+				})
+        </script>
+        @endif
+        {{ \Session::forget('error') }}
+
+        @if(\Session::get('success'))
+        <script type="text/javascript">
+        	Swal.fire({
+					text:"<?php echo Session::get('success');?>",
+					icon:"success",buttonsStyling:!1,
+					confirmButtonText:"Ok, got it!",
+					customClass:{confirmButton:"btn btn-primary"}
+				})
+        </script>
+        @endif
+        {{ \Session::forget('success') }}
+
+        @if(\Session::get('active'))
+        <script type="text/javascript">
+        	Swal.fire({
+					text:"<?php echo Session::get('active');?>",
+					icon:"success",buttonsStyling:!1,
+					confirmButtonText:"Ok, got it!",
+					customClass:{confirmButton:"btn btn-primary"}
+				})
+        </script>
+        @endif
+        {{ \Session::forget('active') }}
+
 	</body>
 	<!--end::Body-->
 </html>
