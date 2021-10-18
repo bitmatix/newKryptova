@@ -1,6 +1,9 @@
 /node_modules
+/public
 /public/hot
 /public/storage
+/public/upload
+/public/uploads
 /storage/*.key
 /vendor
 .env
@@ -10,3 +13,5 @@ Homestead.json
 Homestead.yaml
 npm-debug.log
 yarn-error.log
+/storage/uploads
+composer.lock
