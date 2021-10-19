@@ -94,7 +94,7 @@ Dashboard
             <!--begin::Card body-->
             <div class="card-body d-flex flex-column flex-stack pb-0 px-0">
                 <!--begin::Title-->
-                <div class="text-dark fs-2 text-left mb-10 fw-bolder card-px">User Management</div>
+                <div class="text-dark fs-2 text-left mb-10 fw-bolder card-px">Merchant <br> Management</div>
                 <!--end::Title-->
                 <!--begin::Illustration-->
                 <div class="position-relative align-self-center">
@@ -114,7 +114,7 @@ Dashboard
             <!--begin::Card body-->
             <div class="card-body d-flex flex-column flex-stack pb-0 px-0">
                 <!--begin::Title-->
-                <div class="text-dark fs-2 text-left mb-10 fw-bolder card-px">Support Center</div>
+                <div class="text-dark fs-2 text-left mb-10 fw-bolder card-px">Applications Management</div>
                 <!--end::Title-->
                 <!--begin::Illustration-->
                 <div class="position-relative align-self-center">
@@ -134,7 +134,7 @@ Dashboard
             <!--begin::Card body-->
             <div class="card-body d-flex flex-column flex-stack pb-0 px-0">
                 <!--begin::Title-->
-                <div class="text-dark fs-2 text-left mb-10 fw-bolder card-px">File Manager</div>
+                <div class="text-dark fs-2 text-left mb-10 fw-bolder card-px">Transaction Management</div>
                 <!--end::Title-->
                 <!--begin::Illustration-->
                 <div class="position-relative align-self-end">
@@ -154,7 +154,7 @@ Dashboard
             <!--begin::Card body-->
             <div class="card-body d-flex flex-column flex-stack pb-0 px-0">
                 <!--begin::Title-->
-                <div class="text-dark fs-2 text-left mb-10 fw-bolder card-px">Create Invoice</div>
+                <div class="text-dark fs-2 text-left mb-10 fw-bolder card-px">Report <br>Management</div>
                 <!--end::Title-->
                 <!--begin::Illustration-->
                 <div class="position-relative align-self-center">
