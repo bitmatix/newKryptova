@@ -11,6 +11,18 @@ use App\FirebaseDeviceToken;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Storage;
 use Carbon\Carbon;
+
+
+function getAdminRoleName($id)
+{   
+    $data = \DB::table('admins')->select('admins.id as id','roles.name as role')
+            ->leftJoin('model_has_roles','model_has_roles.model_id','admins.id')
+            ->leftJoin('roles','roles.id','model_has_roles.role_id')
+            ->where("admins.id",$id)->first();
+
+    return $data->role;        
+}
+
 function notificationMsg($type, $message) {
     \Session::put($type, $message);
 }
