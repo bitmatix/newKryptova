@@ -126,24 +126,24 @@ class RequiredFieldsTableSeeder extends Seeder
 		       'updated_at' => date('Y-m-d H:i:s')
 	     	),
 	     	array(
-		       'field_title' => 'ccexpiry month',
-		       'field' => 'ccexpiry_month',
+		       'field_title' => 'Expiry Month',
+		       'field' => 'ccExpiryMonth',
 		       'field_type' => 'string',
 		       'field_validation' => 'required',
 		       'created_at' => date('Y-m-d H:i:s'),
 		       'updated_at' => date('Y-m-d H:i:s')
 	     	),
 	     	array(
-		       'field_title' => 'ccexpiry year',
-		       'field' => 'ccexpiry_year',
+		       'field_title' => 'Expiry Year',
+		       'field' => 'ccExpiryYear',
 		       'field_type' => 'string',
 		       'field_validation' => 'required',
 		       'created_at' => date('Y-m-d H:i:s'),
 		       'updated_at' => date('Y-m-d H:i:s')
 	     	),
 	     	array(
-		       'field_title' => 'cvv number',
-		       'field' => 'cvv_number',
+		       'field_title' => 'CVV Number',
+		       'field' => 'cvvNumber',
 		       'field_type' => 'string',
 		       'field_validation' => 'required',
 		       'created_at' => date('Y-m-d H:i:s'),
