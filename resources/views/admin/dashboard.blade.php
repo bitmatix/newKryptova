@@ -14,7 +14,7 @@ Dashboard
     <!--begin::Col-->
     <div class="col-xl-3">
         <!--begin::Card-->
-        <a href="../../demo12/dist/apps/user-management/users/list.html" class="card card-xl-stretch mb-5 mb-xl-8">
+        <a href="#" class="card card-xl-stretch mb-5 mb-xl-8">
             <!--begin::Card body-->
             <div class="card-body d-flex flex-column flex-stack pb-0 px-0">
                 <!--begin::Title-->
@@ -330,7 +330,7 @@ Dashboard
                                         <td>
                                             <div class="symbol symbol-50px me-2">
                                                 <span class="symbol-label">
-                                                    <img src="assets/media/svg/avatars/018-girl-9.svg" class="h-75 align-self-end" alt="" />
+                                                    <img src="{{ storage_asset('theme/assets/media/svg/avatars/018-girl-9.svg') }}" class="h-75 align-self-end" alt="" />
                                                 </span>
                                             </div>
                                         </td>
@@ -362,7 +362,7 @@ Dashboard
                                         <td>
                                             <div class="symbol symbol-50px me-2">
                                                 <span class="symbol-label">
-                                                    <img src="assets/media/svg/avatars/014-girl-7.svg" class="h-75 align-self-end" alt="" />
+                                                    <img src="{{ storage_asset('theme/assets/media/svg/avatars/014-girl-7.svg') }}" class="h-75 align-self-end" alt="" />
                                                 </span>
                                             </div>
                                         </td>
@@ -394,7 +394,7 @@ Dashboard
                                         <td>
                                             <div class="symbol symbol-50px me-2">
                                                 <span class="symbol-label">
-                                                    <img src="assets/media/svg/avatars/001-boy.svg" class="h-75 align-self-end" alt="" />
+                                                    <img src="{{ storage_asset('theme/assets/media/svg/avatars/001-boy.svg') }}" class="h-75 align-self-end" alt="" />
                                                 </span>
                                             </div>
                                         </td>
@@ -451,7 +451,7 @@ Dashboard
                                         <td>
                                             <div class="symbol symbol-50px me-2">
                                                 <span class="symbol-label">
-                                                    <img src="assets/media/svg/avatars/047-girl-25.svg" class="h-75 align-self-end" alt="" />
+                                                    <img src="{{ storage_asset('theme/assets/media/svg/avatars/047-girl-25.svg') }}" class="h-75 align-self-end" alt="" />
                                                 </span>
                                             </div>
                                         </td>
@@ -483,7 +483,7 @@ Dashboard
                                         <td>
                                             <div class="symbol symbol-50px me-2">
                                                 <span class="symbol-label">
-                                                    <img src="assets/media/svg/avatars/014-girl-7.svg" class="h-75 align-self-end" alt="" />
+                                                    <img src="{{ storage_asset('theme/assets/media/svg/avatars/014-girl-7.svg') }}" class="h-75 align-self-end" alt="" />
                                                 </span>
                                             </div>
                                         </td>
@@ -515,7 +515,7 @@ Dashboard
                                         <td>
                                             <div class="symbol symbol-50px me-2">
                                                 <span class="symbol-label">
-                                                    <img src="assets/media/svg/avatars/043-boy-18.svg" class="h-75 align-self-end" alt="" />
+                                                    <img src="{{ storage_asset('theme/assets/media/svg/avatars/043-boy-18.svg') }}" class="h-75 align-self-end" alt="" />
                                                 </span>
                                             </div>
                                         </td>
@@ -547,7 +547,7 @@ Dashboard
                                         <td>
                                             <div class="symbol symbol-50px me-2">
                                                 <span class="symbol-label">
-                                                    <img src="assets/media/svg/avatars/001-boy.svg" class="h-75 align-self-end" alt="" />
+                                                    <img src="{{ storage_asset('theme/assets/media/svg/avatars/001-boy.svg') }}" class="h-75 align-self-end" alt="" />
                                                 </span>
                                             </div>
                                         </td>
@@ -963,7 +963,7 @@ Dashboard
                             <!--begin::Symbol-->
                             <div class="symbol symbol-50px me-3">
                                 <div class="symbol-label bg-light">
-                                    <img src="assets/media/svg/brand-logos/plurk.svg" class="h-50" alt="" />
+                                    <img src="{{ storage_asset('theme/assets/media/svg/brand-logos/plurk.svg') }}" class="h-50" alt="" />
                                 </div>
                             </div>
                             <!--end::Symbol-->
@@ -987,7 +987,7 @@ Dashboard
                             <!--begin::Symbol-->
                             <div class="symbol symbol-50px me-3">
                                 <div class="symbol-label bg-light">
-                                    <img src="assets/media/svg/brand-logos/figma-1.svg" class="h-50" alt="" />
+                                    <img src="{{ storage_asset('theme/assets/media/svg/brand-logos/figma-1.svg') }}" class="h-50" alt="" />
                                 </div>
                             </div>
                             <!--end::Symbol-->
@@ -1011,7 +1011,7 @@ Dashboard
                             <!--begin::Symbol-->
                             <div class="symbol symbol-50px me-3">
                                 <div class="symbol-label bg-light">
-                                    <img src="assets/media/svg/brand-logos/vimeo.svg" class="h-50" alt="" />
+                                    <img src="{{ storage_asset('theme/assets/media/svg/brand-logos/vimeo.svg') }}" class="h-50" alt="" />
                                 </div>
                             </div>
                             <!--end::Symbol-->
@@ -1087,7 +1087,7 @@ Dashboard
                                         <td>
                                             <div class="symbol symbol-45px me-2">
                                                 <span class="symbol-label">
-                                                    <img src="assets/media/svg/brand-logos/plurk.svg" class="h-50 align-self-center" alt="" />
+                                                    <img src="{{ storage_asset('theme/assets/media/svg/brand-logos/plurk.svg') }}" class="h-50 align-self-center" alt="" />
                                                 </span>
                                             </div>
                                         </td>
@@ -1116,7 +1116,7 @@ Dashboard
                                         <td>
                                             <div class="symbol symbol-45px me-2">
                                                 <span class="symbol-label">
-                                                    <img src="assets/media/svg/brand-logos/telegram.svg" class="h-50 align-self-center" alt="" />
+                                                    <img src="{{ storage_asset('theme/assets/media/svg/brand-logos/telegram.svg') }}" class="h-50 align-self-center" alt="" />
                                                 </span>
                                             </div>
                                         </td>
@@ -1145,7 +1145,7 @@ Dashboard
                                         <td>
                                             <div class="symbol symbol-45px me-2">
                                                 <span class="symbol-label">
-                                                    <img src="assets/media/svg/brand-logos/vimeo.svg" class="h-50 align-self-center" alt="" />
+                                                    <img src="{{ storage_asset('theme/assets/media/svg/brand-logos/vimeo.svg') }}" class="h-50 align-self-center" alt="" />
                                                 </span>
                                             </div>
                                         </td>
@@ -1174,7 +1174,7 @@ Dashboard
                                         <td>
                                             <div class="symbol symbol-45px me-2">
                                                 <span class="symbol-label">
-                                                    <img src="assets/media/svg/brand-logos/bebo.svg" class="h-50 align-self-center" alt="" />
+                                                    <img src="{{ storage_asset('theme/assets/media/svg/brand-logos/bebo.svg') }}" class="h-50 align-self-center" alt="" />
                                                 </span>
                                             </div>
                                         </td>
@@ -1203,7 +1203,7 @@ Dashboard
                                         <td>
                                             <div class="symbol symbol-45px me-2">
                                                 <span class="symbol-label">
-                                                    <img src="assets/media/svg/brand-logos/kickstarter.svg" class="h-50 align-self-center" alt="" />
+                                                    <img src="{{ storage_asset('theme/assets/media/svg/brand-logos/kickstarter.svg') }}" class="h-50 align-self-center" alt="" />
                                                 </span>
                                             </div>
                                         </td>
@@ -1258,7 +1258,7 @@ Dashboard
                                         <td>
                                             <div class="symbol symbol-45px me-2">
                                                 <span class="symbol-label">
-                                                    <img src="assets/media/svg/brand-logos/plurk.svg" class="h-50 align-self-center" alt="" />
+                                                    <img src="{{ storage_asset('theme/assets/media/svg/brand-logos/plurk.svg') }}" class="h-50 align-self-center" alt="" />
                                                 </span>
                                             </div>
                                         </td>
@@ -1287,7 +1287,7 @@ Dashboard
                                         <td>
                                             <div class="symbol symbol-45px me-2">
                                                 <span class="symbol-label">
-                                                    <img src="assets/media/svg/brand-logos/telegram.svg" class="h-50 align-self-center" alt="" />
+                                                    <img src="{{ storage_asset('theme/assets/media/svg/brand-logos/telegram.svg') }}" class="h-50 align-self-center" alt="" />
                                                 </span>
                                             </div>
                                         </td>
@@ -1316,7 +1316,7 @@ Dashboard
                                         <td>
                                             <div class="symbol symbol-45px me-2">
                                                 <span class="symbol-label">
-                                                    <img src="assets/media/svg/brand-logos/bebo.svg" class="h-50 align-self-center" alt="" />
+                                                    <img src="{{ storage_asset('theme/assets/media/svg/brand-logos/bebo.svg') }}" class="h-50 align-self-center" alt="" />
                                                 </span>
                                             </div>
                                         </td>
@@ -1371,7 +1371,7 @@ Dashboard
                                         <td>
                                             <div class="symbol symbol-45px me-2">
                                                 <span class="symbol-label">
-                                                    <img src="assets/media/svg/brand-logos/kickstarter.svg" class="h-50 align-self-center" alt="" />
+                                                    <img src="{{ storage_asset('theme/assets/media/svg/brand-logos/kickstarter.svg') }}" class="h-50 align-self-center" alt="" />
                                                 </span>
                                             </div>
                                         </td>
@@ -1400,7 +1400,7 @@ Dashboard
                                         <td>
                                             <div class="symbol symbol-45px me-2">
                                                 <span class="symbol-label">
-                                                    <img src="assets/media/svg/brand-logos/bebo.svg" class="h-50 align-self-center" alt="" />
+                                                    <img src="{{ storage_asset('theme/assets/media/svg/brand-logos/bebo.svg') }}" class="h-50 align-self-center" alt="" />
                                                 </span>
                                             </div>
                                         </td>
@@ -1429,7 +1429,7 @@ Dashboard
                                         <td>
                                             <div class="symbol symbol-45px me-2">
                                                 <span class="symbol-label">
-                                                    <img src="assets/media/svg/brand-logos/vimeo.svg" class="h-50 align-self-center" alt="" />
+                                                    <img src="{{ storage_asset('theme/assets/media/svg/brand-logos/vimeo.svg') }}" class="h-50 align-self-center" alt="" />
                                                 </span>
                                             </div>
                                         </td>
@@ -1458,7 +1458,7 @@ Dashboard
                                         <td>
                                             <div class="symbol symbol-45px me-2">
                                                 <span class="symbol-label">
-                                                    <img src="assets/media/svg/brand-logos/telegram.svg" class="h-50 align-self-center" alt="" />
+                                                    <img src="{{ storage_asset('theme/assets/media/svg/brand-logos/telegram.svg') }}" class="h-50 align-self-center" alt="" />
                                                 </span>
                                             </div>
                                         </td>

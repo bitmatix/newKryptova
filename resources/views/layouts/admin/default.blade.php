@@ -5,7 +5,7 @@
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width,initial-scale=1">
-        <title>{{ config('app.name') }} | Admin @yield('title')</title>
+        <title>{{ config('app.name') }} Admin | @yield('title')</title>
 
         <link rel="shortcut icon" href="{{ storage_asset('theme/assets/media/logos/favicon.ico') }}" />
         <!--begin::Fonts-->
@@ -86,7 +86,7 @@
                                 <!--begin::Col-->
                                 <div class="col-xl-6">
                                     <div class="d-flex flex-stack ps-lg-20">
-                                        <a href="#" class="btn btn-icon btn-outline btn-nav active h-50px w-50px h-lg-70px w-lg-70px ms-2" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-dismiss="click" data-bs-placement="bottom" data-bs-original-title="Dashboard">
+                                        <a href="{{ route('dashboard') }}" class="{{ $pageActive == 'dashboard' ? 'active' : ''  }} btn btn-icon btn-outline btn-nav h-50px w-50px h-lg-70px w-lg-70px ms-2" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-dismiss="click" data-bs-placement="bottom" data-bs-original-title="Dashboard">
                                             <!--begin::Svg Icon | path: icons/duotune/abstract/abs038.svg-->
                                             <span class="svg-icon svg-icon-1 svg-icon-lg-2hx">
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
@@ -113,7 +113,7 @@
                                             <!--end::Svg Icon-->
                                         </a>
 
-                                        <a href="{!! url('admin/users-management') !!}" class="btn btn-icon btn-outline btn-nav h-50px w-50px h-lg-70px w-lg-70px ms-2" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-dismiss="click" data-bs-placement="bottom" data-bs-original-title="Merchant User">
+                                        <a href="{!! url('admin/users-management') !!}" class="{{ $pageActive == 'users-management' ? 'active' : ''  }} btn btn-icon btn-outline btn-nav h-50px w-50px h-lg-70px w-lg-70px ms-2" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-dismiss="click" data-bs-placement="bottom" data-bs-original-title="Merchant User">
                                             <!--begin::Svg Icon | path: icons/duotune/technology/teh008.svg-->
                                             <span class="svg-icon svg-icon-1 svg-icon-lg-2hx">
                                                 <img src="https://img.icons8.com/external-flatart-icons-outline-flatarticons/30/FFFFFF/external-users-cv-resume-flatart-icons-outline-flatarticons.png"/>
