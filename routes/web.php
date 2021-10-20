@@ -53,3 +53,18 @@ Route::get('/subUserLogin', 'AdminController@subUserLoginByAdmin')->name('subUse
 Route::get('/agentLogin', 'AdminController@agentLoginByAdmin')->name('agentLogin');
 Route::get('/bankLogin', 'AdminController@bankLoginByAdmin')->name('bankLogin');
 /*********************Admin Routes Module End *************************************/
+
+/*********************Agent Routes Module End *************************************/
+Route::get('rp/login', 'Auth\AgentUserAuthController@getLogin')->name('rp/login');
+Route::post('rp/login', 'Auth\AgentUserAuthController@postLogin')->name('rp/login');
+Route::get('rp/logout', 'Auth\AgentUserAuthController@logout')->name('rp/logout');
+
+Route::get('rp/password/reset', 'Auth\AgentUserAuthController@agentForgetPassword')->name('rp-password-reset');
+Route::post('rp/password/email', 'Auth\AgentUserAuthController@agentForgetEmail')->name('rp-password-email');
+Route::get('rp/password/reset/{id}', 'Auth\AgentUserAuthController@agentForgetPasswordForm')->name('rp-password-reset-form');
+Route::post('rp/password/resetForm', 'Auth\AgentUserAuthController@agentForgetPasswordFormPost')->name('rp-password-resetForm');
+
+Route::get('rp/kryptova-otp', 'Auth\AgentUserAuthController@otpform')->name('rp.kryptova-otp');
+Route::get('rp/resend-otp', 'Auth\AgentUserAuthController@resendotp')->name('rp.resend-otp');
+Route::post('rp/kryptova-otp-store', 'Auth\AgentUserAuthController@checkotp')->name('rp.kryptova-otp-store');
+/*********************Agent Routes Module End *************************************/

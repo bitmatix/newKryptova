@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Agent;
 
 use App\Http\Requests;
+use App\Jobs\SendEmailJob;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\User;
@@ -70,26 +71,26 @@ class UserManagementController extends Controller
             'mobile_no' => 'required|numeric',
             'country_code' => 'required',
         ],['password.regex' => 'Enter valid format.(One Upper,Lower,Numeric,and Special character.)']);
-        
-        if(auth()->guard('agentUser')->user()->main_agent_id == 0){
-            $agentId = auth()->guard('agentUser')->user()->id;
-        }else{
-            $agentId = auth()->guard('agentUser')->user()->main_agent_id;
-        }
 
-        $input['agent_id'] = $agentId;
+        $input['agent_id'] = auth()->guard('agentUser')->user()->id;
         $uuid = Str::uuid()->toString();
         $input['uuid'] = $uuid;
         $input['token'] = Str::random(40) . time();
 
         unset($input['password_confirmation']);
-        
+
         $user =  $this->user->storeData($input);
 
         try {
+            /*$mailData = [
+                'email_to' => $input['email'],
+                'init_email_class' => new userRegisterMail($input)
+            ];
+            dispatch(new SendEmailJob($mailData));*/
+
             Mail::to($input['email'])->send(new userRegisterMail($input));
         } catch (\Exception $e) {
-            //             
+            //
         }
 
         notificationMsg('success','Merchant Created Successfully!');
@@ -101,13 +102,7 @@ class UserManagementController extends Controller
     {
         $user = User::where('users.id', $id)->first();
 
-        if(auth()->guard('agentUser')->user()->main_agent_id == 0){
-            $agentId = auth()->guard('agentUser')->user()->id;
-        }else{
-            $agentId = auth()->guard('agentUser')->user()->main_agent_id;
-        }
-
-        if($user->agent_id ==  $agentId){
+        if($user->agent_id ==  auth()->guard('agentUser')->user()->id){
             $category = Categories::orderBy("categories.id","ASC")->pluck('name', 'id')->toArray();
             $technologypartners = TechnologyPartner::latest()->pluck('name', 'id')->toArray();
             return view('agent.userManagement.applicationsCreate', compact('technologypartners', 'id','category'));
@@ -125,13 +120,7 @@ class UserManagementController extends Controller
 
         $user = User::where('users.id', $id)->first();
 
-        if(auth()->guard('agentUser')->user()->main_agent_id == 0){
-            $agentId = auth()->guard('agentUser')->user()->id;
-        }else{
-            $agentId = auth()->guard('agentUser')->user()->main_agent_id;
-        }
-
-        if($user->agent_id ==  $agentId){
+        if($user->agent_id ==  auth()->guard('agentUser')->user()->id){
             $category = Categories::orderBy("categories.id","ASC")->pluck('name', 'id')->toArray();
             $technologypartners = TechnologyPartner::latest()->pluck('name', 'id')->toArray();
             return view('agent.userManagement.applicationsEdit', compact('technologypartners','data', 'id','category'));
@@ -161,19 +150,13 @@ class UserManagementController extends Controller
             return redirect()->back()->withInput($request->all());
         }
 
-        if(auth()->guard('agentUser')->user()->main_agent_id == 0){
-            $agentId = auth()->guard('agentUser')->user()->id;
-        }else{
-            $agentId = auth()->guard('agentUser')->user()->main_agent_id;
-        }
-
         $this->validate(
             $request,
             [
                 'business_type' => 'required',
                 'accept_card' => 'required',
                 'business_name' => 'required',
-                'phone_no' => 'required|max:14',
+                'phone_no' => 'required|digits_between:2,14',
                 'skype_id' => 'required',
                 'website_url' => ['required', 'regex:/^((ftp|http|https):\/\/)?(www.)?(?!.*(ftp|http|https|www.))[a-zA-Z0-9_-]+(\.[a-zA-Z]+)+((\/)[\w#]+)*(\/\w+\?[a-zA-Z0-9_]+=\w+(&[a-zA-Z0-9_]+=\w+)*)?$/'],
                 'business_contact_first_name' => 'required',
@@ -334,7 +317,7 @@ class UserManagementController extends Controller
 
             $notification = [
                 'user_id' => '1',
-                'sendor_id' => $agentId,
+                'sendor_id' => auth()->guard('agentUser')->user()->id,
                 'type' => 'admin',
                 'title' => 'Application Created',
                 'body' => 'You have received a new application from RP.',
@@ -343,8 +326,15 @@ class UserManagementController extends Controller
             ];
 
             $realNotification = addNotification($notification);
-            
+
             Admin::find('1')->notify(new NewApplicationSubmit($application));
+
+            /*$mailData = [
+                'email_to' => $user->email,
+                'init_email_class' => new NewApplicationSubmitUser($input)
+            ];
+            dispatch(new SendEmailJob($mailData));*/
+
             Mail::to($user->email)->send(new NewApplicationSubmitUser($user));
 
             DB::commit();
@@ -487,7 +477,6 @@ class UserManagementController extends Controller
             Storage::disk('s3')->put($filePath, file_get_contents($request->file('company_incorporation_certificate')->getRealPath()));
             $input['company_incorporation_certificate'] = $filePath;
         }
-        
         if ($request->hasFile('domain_ownership')) {
             Storage::disk('s3')->delete($application->domain_ownership);
             $imageNamedomainownership = time() . rand(0, 10000000000000) . pathinfo(rand(111111111111, 999999999999), PATHINFO_FILENAME);
@@ -551,7 +540,7 @@ class UserManagementController extends Controller
         }
 
         if ($request->hasFile('owner_personal_bank_statement')) {
-            File::delete(storage_path() . "/uploads/" . $user->name . '-' . $user->id . '/' . $application->owner_personal_bank_statement);
+            Storage::disk('s3')->delete($application->owner_personal_bank_statement);
             $imageOwnerBankStatement = time() . rand(0, 10000000000000) . pathinfo(rand(111111111111, 999999999999), PATHINFO_FILENAME);
             $imageOwnerBankStatement = $imageOwnerBankStatement . '.' . $request->file('owner_personal_bank_statement')->getClientOriginalExtension();
             $filePath = 'uploads/application-' . $user->id . '/' . $imageOwnerBankStatement;
@@ -559,8 +548,10 @@ class UserManagementController extends Controller
             $input['owner_personal_bank_statement'] = $filePath;
         }
 
+
+
         $this->Application->updateApplication($application->id, $input);
-        
+
         notificationMsg('success', 'Your application has been updated successfully.');
 
         return redirect()->route('rp.user-management');

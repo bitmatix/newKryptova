@@ -12,6 +12,7 @@ use View;
 use Redirect;
 use Hash;
 use Auth;
+use Session;
 use App\Transaction;
 use App\Application;
 use App\Exports\AgentsMerchantExport;
@@ -53,55 +54,38 @@ class AgentUserBaseController extends Controller
     {
         $input = \Arr::except($request->all(), array('_token', '_method'));
 
-        $slave_connection = env('SLAVE_DB_CONNECTION_NAME', '');
-        $payment_gateway_id = (env('PAYMENT_GATEWAY_ID')) ? explode(",", env('PAYMENT_GATEWAY_ID')) : [];
-
-        if (!empty($slave_connection)) {
-            \DB::setDefaultConnection($slave_connection);
-            $getDatabaseName = \DB::connection()->getDatabaseName();
-            _WriteLogsInFile($getDatabaseName . " connection from RP dashboard", 'slave_connection');
-        }
-
-        if(auth()->guard('agentUser')->user()->main_agent_id == 0){
-            $agentId = auth()->guard('agentUser')->user()->id;
-        }else{
-            $agentId = auth()->guard('agentUser')->user()->main_agent_id;
-        }
-
-        $userIds = \DB::table('users')->where('agent_id', $agentId)->pluck('id');
+        $userIds = \DB::table('users')->where('agent_id', auth()->guard('agentUser')->user()->id)->pluck('id');
         
-        $transaction = DB::table("transactions as t")
+        $transaction = DB::table("tx_transactions")
             ->selectRaw(
-                "
-                        sum(if(t.status = '1', amount, 0.00)) as successfullV,
-                        sum(if(t.status = '1', 1, 0)) as successfullC,
-                        round((100*sum(if(t.status = '1', 1, 0)))/(sum(if(t.status = '0', 1, 0))+sum(if(t.status = '1', 1, 0))) , 2) as successfullP,
+                '
+                        sum(VOLs) as successfullV,
+                        sum(TXs) as successfullC,
+                        (100*sum(TXs))/(sum(TXd)+sum(TXs)) as successfullP,
                         
-                        sum(if(t.status = '0' , amount,0.00 )) as declinedV,
-                        sum(if(t.status = '0', 1, 0)) as declinedC,
-                        round((100*sum(if(t.status = '0', 1, 0)))/(sum(if(t.status = '0', 1, 0))+sum(if(t.status = '1', 1, 0))) ,2) as declinedP,
+                        sum(VOLd) as declinedV,
+                        sum(TXd) as declinedC,
+                        (100*sum(TXd))/(sum(TXd)+sum(TXs)) as declinedP,
                         
-                        sum(if(t.status = '1' and t.chargebacks = '1' and t.chargebacks_remove = '0', amount, 0)) as chargebackV,
-                        sum(if(t.status = '1' and t.chargebacks = '1' and t.chargebacks_remove = '0', 1, 0)) as chargebackC,
-                        round((100*sum(if(t.status = '1' and t.chargebacks = '1' and t.chargebacks_remove = '0', 1, 0)))/sum(if(t.status = '1', 1, 0)) ,2) as chargebackP,
+                        sum(CBV) as chargebackV,
+                        sum(CBTX) as chargebackC,
+                        (100*sum(CBTX))/sum(TXs) as chargebackP,
                         
-                        sum(if(t.status = '1' and t.is_flagged = '1' and t.is_flagged_remove= '0', amount, 0)) as suspiciousV,
-                        sum(if(t.status = '1' and t.is_flagged = '1' and t.is_flagged_remove= '0', 1, 0)) as suspiciousC,
-                        round((100*sum(if(t.status = '1' and t.is_flagged = '1' and t.is_flagged_remove= '0', 1, 0)))/sum(if(t.status = '1', 1, 0)) ,2) as suspiciousP,
+                        sum(FLGV) as suspiciousV,
+                        sum(FLGTX) as suspiciousC,
+                        (100*sum(FLGTX))/sum(TXs) as suspiciousP,
                         
-                        sum(if(t.status = '1' and t.refund = '1' and t.refund_remove='0', amount, 0)) as refundV,
-                        sum(if(t.status = '1' and t.refund = '1' and t.refund_remove='0', 1, 0)) as refundC,
-                        round((100*sum(if(t.status = '1' and t.refund = '1' and t.refund_remove='0', 1, 0)))/sum(if(t.status = '1', 1, 0)) ,2) as refundP",
+                        sum(REFV) as refundV,
+                        sum(REFTX) as refundC,
+                        (100*sum(REFTX))/sum(TXs) as refundP',
             )
-            ->whereIn('t.user_id', $userIds)
-            ->whereNotIn('t.payment_gateway_id', $payment_gateway_id)
-            ->where('t.deleted_at', NULL)
+            ->whereIn('user_id', $userIds)
             ->first();
         
         
         $latestMerchants = $this->user->getAgentUsers();
         $latest10Transactions = $this->Transaction->latest10TransactionsForAgent();
-
+    
         return view('agent.dashboard', compact('latest10Transactions', 'latestMerchants', 'transaction'));
     }
 
@@ -147,9 +131,7 @@ class AgentUserBaseController extends Controller
         }
 
         $this->agentUser->updateData(auth()->guard('agentUser')->user()->id, $input);
-
-        notificationMsg('success', 'Profile Updated Successfully!');
-
+        \Session::put('success', 'Profile Updated Successfully!');
         return redirect()->route('profile-rp');
     }
 
@@ -159,13 +141,6 @@ class AgentUserBaseController extends Controller
         if (isset($input['type']) && $input['type'] == 'xlsx') {
             return Excel::download(new AgentsMerchantExport, 'Merchant_Excel_' . date('d-m-Y') . '.xlsx');
         }
-
-        if(auth()->guard('agentUser')->user()->main_agent_id == 0){
-            $agentId = auth()->guard('agentUser')->user()->id;
-        }else{
-            $agentId = auth()->guard('agentUser')->user()->main_agent_id;
-        }
-
         if (isset($input['noList'])) {
             $noList = $input['noList'];
         } else {
@@ -173,7 +148,7 @@ class AgentUserBaseController extends Controller
         }
         $merchantManagementData = $this->user->getUserDataForAgent($input, $noList);
         $businessName = Application::join('users', 'users.id', 'applications.user_id')
-            ->where('users.agent_id', $agentId)
+            ->where('users.agent_id', auth()->guard('agentUser')->user()->id)
             ->pluck('business_name', 'user_id')
             ->toArray();
         return view('agent.userManagement.index', compact('merchantManagementData', 'businessName'));
