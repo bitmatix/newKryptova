@@ -25,7 +25,7 @@ class User extends Authenticatable
         'one_month_email_limit', 'is_multi_mid', 'mid_list', 'per_transaction_limit', 'merchant_transaction_notification', 'user_transaction_notification',
         'additional_merchant_transaction_notification', 'additional_mail', 'logo', 'iframe_logo', 'enable_product_dashboard', 'platform',
         'website_url', 'agent_id', 'agent_commission', 'agent_commission_master_card','crypto_api_id', 'category', 'token', 'remember_token', 'password', 'email_changes', 'agreement', 'transactions',
-        'reports', 'settings', 'main_user_id', 'multiple_mid', 'bank_mid', 'is_disable_rule', 'is_whitelable'
+        'reports', 'settings', 'main_user_id', 'multiple_mid', 'bank_mid', 'is_disable_rule', 'is_whitelable','is_white_label','white_label_agent_id'
     ];
 
     /**
@@ -315,6 +315,99 @@ class User extends Authenticatable
         }
         $data = $data->orderBy('users.id', 'desc')
             ->where('users.main_user_id', '0')
+            ->where('users.is_white_label', '0')
+            ->paginate($noList);
+
+        return $data;
+    }
+
+    public function getMainWLUserData($input, $noList)
+    {
+        $data = static::select(
+            'applications.business_name',
+            'middetails.bank_name',
+            'users.*'
+        )
+        ->leftjoin('applications', 'applications.user_id', 'users.id')
+        ->leftJoin('middetails', 'middetails.id', 'users.mid');
+
+        if (isset($input['email']) && $input['email'] != '') {
+            $data = $data->where('users.email', 'like', '%' . $input['email'] . '%');
+        }
+        if (isset($input['company']) && $input['company'] != '') {
+            $data = $data->where('applications.business_name', $input['company']);
+        }
+        if (isset($input['payment_gateway_id']) && $input['payment_gateway_id'] != '') {
+            $data = $data->where('users.mid', $input['payment_gateway_id']);
+        }
+        if (isset($input['category']) && $input['category'] != '') {
+            $data = $data->where('applications.category_id', $input['category']);
+        }
+        if (isset($input['website']) && $input['website'] != '') {
+            $data = $data->where('applications.website_url', 'like', '%' . $input['website'] . '%');
+        }
+        if (isset($input['api_key']) && $input['api_key'] != '') {
+            $data = $data->where('users.api_key', $input['api_key']);
+        }
+        if (isset($input['global_search']) && $input['global_search'] != '') {
+            $data = $data->where(function ($query) use ($input) {
+                $query->orWhere('applications.business_name', 'like', '%' . $input['global_search'] . '%')
+                    ->orWhere('users.id', 'like', '%' . $input['global_search'] . '%')
+                    ->orWhere('users.email', 'like', '%' . $input['global_search'] . '%')
+                    ->orWhere('users.token', 'like', '%' . $input['global_search'] . '%')
+                    ->orWhere('users.otp', 'like', '%' . $input['global_search'] . '%');
+            });
+        }
+        $data = $data->orderBy('users.id', 'desc')
+            ->where('users.main_user_id', '0')
+            ->where('users.is_white_label', '1')
+            ->where('users.white_label_agent_id', auth()->guard('agentUserWL')->user()->id)
+            ->paginate($noList);
+
+        return $data;
+    }
+
+    public function getMainWLUserDataForAdmin($input, $noList, $id)
+    {
+        $data = static::select(
+            'applications.business_name',
+            'middetails.bank_name',
+            'users.*'
+        )
+        ->leftjoin('applications', 'applications.user_id', 'users.id')
+        ->leftJoin('middetails', 'middetails.id', 'users.mid');
+
+        if (isset($input['email']) && $input['email'] != '') {
+            $data = $data->where('users.email', 'like', '%' . $input['email'] . '%');
+        }
+        if (isset($input['company']) && $input['company'] != '') {
+            $data = $data->where('applications.business_name', $input['company']);
+        }
+        if (isset($input['payment_gateway_id']) && $input['payment_gateway_id'] != '') {
+            $data = $data->where('users.mid', $input['payment_gateway_id']);
+        }
+        if (isset($input['category']) && $input['category'] != '') {
+            $data = $data->where('applications.category_id', $input['category']);
+        }
+        if (isset($input['website']) && $input['website'] != '') {
+            $data = $data->where('applications.website_url', 'like', '%' . $input['website'] . '%');
+        }
+        if (isset($input['api_key']) && $input['api_key'] != '') {
+            $data = $data->where('users.api_key', $input['api_key']);
+        }
+        if (isset($input['global_search']) && $input['global_search'] != '') {
+            $data = $data->where(function ($query) use ($input) {
+                $query->orWhere('applications.business_name', 'like', '%' . $input['global_search'] . '%')
+                    ->orWhere('users.id', 'like', '%' . $input['global_search'] . '%')
+                    ->orWhere('users.email', 'like', '%' . $input['global_search'] . '%')
+                    ->orWhere('users.token', 'like', '%' . $input['global_search'] . '%')
+                    ->orWhere('users.otp', 'like', '%' . $input['global_search'] . '%');
+            });
+        }
+        $data = $data->orderBy('users.id', 'desc')
+            ->where('users.main_user_id', '0')
+            ->where('users.is_white_label', '1')
+            ->where('users.white_label_agent_id', $id)
             ->paginate($noList);
 
         return $data;
@@ -522,7 +615,13 @@ class User extends Authenticatable
 
     public function getUserDataForAgent($input, $noList)
     {
-        $userIds = \DB::table('users')->where('agent_id', auth()->guard('agentUser')->user()->id)->pluck('id');
+        if(auth()->guard('agentUser')->user()->main_agent_id == 0){
+            $agentId = auth()->guard('agentUser')->user()->id;
+        }else{
+            $agentId = auth()->guard('agentUser')->user()->main_agent_id;
+        }
+        
+        $userIds = \DB::table('users')->where('agent_id', $agentId)->pluck('id');
 
         $data = static::select('applications.business_name', 'middetails.bank_name', 'users.*', 'applications.status as appStatus')
             ->leftJoin('applications', 'applications.user_id', 'users.id')
@@ -555,7 +654,13 @@ class User extends Authenticatable
 
     public function getAgentUsers()
     {
-        $userIds = \DB::table('users')->where('agent_id', auth()->guard('agentUser')->user()->id)->pluck('id');
+        if(auth()->guard('agentUser')->user()->main_agent_id == 0){
+            $agentId = auth()->guard('agentUser')->user()->id;
+        }else{
+            $agentId = auth()->guard('agentUser')->user()->main_agent_id;
+        }
+        
+        $userIds = \DB::table('users')->where('agent_id', $agentId)->pluck('id');
 
         $data = static::select('applications.business_name', 'middetails.bank_name', 'users.*')
             ->join('applications', 'applications.user_id', 'users.id')

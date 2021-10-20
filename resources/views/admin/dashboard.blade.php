@@ -38,7 +38,7 @@ Dashboard
             <!--begin::Card body-->
             <div class="card-body d-flex flex-column flex-stack pb-0 px-0">
                 <!--begin::Title-->
-                <div class="text-dark fs-2 text-left mb-10 fw-bolder card-px">Applications Management</div>
+                <div class="text-dark fs-2 text-left mb-10 fw-bolder card-px">Applications<br> Management</div>
                 <!--end::Title-->
                 <!--begin::Illustration-->
                 <div class="position-relative align-self-center">
@@ -58,7 +58,7 @@ Dashboard
             <!--begin::Card body-->
             <div class="card-body d-flex flex-column flex-stack pb-0 px-0">
                 <!--begin::Title-->
-                <div class="text-dark fs-2 text-left mb-10 fw-bolder card-px">Transaction Management</div>
+                <div class="text-dark fs-2 text-left mb-10 fw-bolder card-px">Transaction<br> Management</div>
                 <!--end::Title-->
                 <!--begin::Illustration-->
                 <div class="position-relative align-self-end">

@@ -19,6 +19,8 @@
         <link href="{{ storage_asset('theme/assets/css/style.dark.bundle.rtl.css') }}" rel="stylesheet" type="text/css" />
         <!--end::Global Stylesheets Bundle-->
 
+        <link href="{{ storage_asset('theme/assets/css/custom.css') }}" rel="stylesheet" type="text/css" />
+
         @yield('customeStyle')
         <?php
         $currentPageURL = URL::current();
@@ -111,7 +113,7 @@
                                             <!--end::Svg Icon-->
                                         </a>
 
-                                        <a href="#" class="btn btn-icon btn-outline btn-nav h-50px w-50px h-lg-70px w-lg-70px ms-2" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-dismiss="click" data-bs-placement="bottom" data-bs-original-title="Merchant User">
+                                        <a href="{!! url('admin/users-management') !!}" class="btn btn-icon btn-outline btn-nav h-50px w-50px h-lg-70px w-lg-70px ms-2" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-dismiss="click" data-bs-placement="bottom" data-bs-original-title="Merchant User">
                                             <!--begin::Svg Icon | path: icons/duotune/technology/teh008.svg-->
                                             <span class="svg-icon svg-icon-1 svg-icon-lg-2hx">
                                                 <img src="https://img.icons8.com/external-flatart-icons-outline-flatarticons/30/FFFFFF/external-users-cv-resume-flatart-icons-outline-flatarticons.png"/>

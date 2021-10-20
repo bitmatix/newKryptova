@@ -199,7 +199,6 @@ class UserManagementController extends Controller
 
         );
 
-
         $input['user_id'] = $id;
         $user = User::where('id',$id)->first();
         $input['processing_country'] = json_encode($input['processing_country']);
@@ -313,7 +312,6 @@ class UserManagementController extends Controller
 
         DB::beginTransaction();
         try {
-
             $input['status'] = '1';
             $application = $this->Application->storeData($input);
 
@@ -479,7 +477,6 @@ class UserManagementController extends Controller
             Storage::disk('s3')->put($filePath, file_get_contents($request->file('company_incorporation_certificate')->getRealPath()));
             $input['company_incorporation_certificate'] = $filePath;
         }
-
         if ($request->hasFile('domain_ownership')) {
             Storage::disk('s3')->delete($application->domain_ownership);
             $imageNamedomainownership = time() . rand(0, 10000000000000) . pathinfo(rand(111111111111, 999999999999), PATHINFO_FILENAME);
