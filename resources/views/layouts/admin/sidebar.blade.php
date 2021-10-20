@@ -1,7 +1,7 @@
 <div id="kt_aside_menu_wrapper" class="w-100 hover-scroll-overlay-y d-flex" data-kt-scroll="true" data-kt-scroll-height="auto" data-kt-scroll-dependencies="#kt_aside_search, #kt_aside_footer" data-kt-scroll-wrappers="#kt_aside, #kt_aside_menu" data-kt-scroll-offset="100px">
     <div id="kt_aside_menu" class="menu menu-column menu-title-gray-600 menu-state-primary menu-state-icon-primary menu-state-bullet-primary menu-icon-gray-400 menu-arrow-gray-400 fw-bold fs-6 my-auto" data-kt-menu="true">
         <div class="menu-item py-2">
-            <a class="menu-link active scroll-ps" href="../../demo12/dist/index.html" title="Dashboard" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-dismiss="click" data-bs-placement="left">
+            <a class="menu-link active scroll-ps" href="{{ route('dashboard') }}" title="Dashboard" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-dismiss="click" data-bs-placement="left">
                 <span class="menu-icon">
                     <!--begin::Svg Icon | path: icons/duotune/general/gen025.svg-->
                     <span class="svg-icon svg-icon-1 svg-icon-lg-2x">
@@ -17,7 +17,7 @@
             </a>
         </div>
         <div data-kt-menu-trigger="click" data-kt-menu-flip="false" data-kt-menu-placement="left-start" class="menu-item py-2">
-            <span class="menu-link scroll-ps" title="Authentication Pages" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-dismiss="click" data-bs-placement="left">
+            <span class="menu-link scroll-ps" title="MID Management" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-dismiss="click" data-bs-placement="left">
                 <span class="menu-icon">
                     <!--begin::Svg Icon | path: icons/duotune/abstract/abs037.svg-->
                     <span class="svg-icon svg-icon-1 svg-icon-lg-2x">
@@ -32,7 +32,7 @@
             <div class="menu-sub menu-sub-dropdown w-225px px-1 py-4">
                 <div class="menu-item">
                     <div class="menu-content">
-                        <span class="menu-section fs-5 fw-bolder ps-1 py-1">Authentication</span>
+                        <span class="menu-section fs-5 fw-bolder ps-1 py-1">MID Management</span>
                     </div>
                 </div>
                 <div data-kt-menu-trigger="click" class="menu-item menu-accordion">
