@@ -1,6 +1,6 @@
 <div id="kt_aside_menu_wrapper" class="w-100 hover-scroll-overlay-y d-flex" data-kt-scroll="true" data-kt-scroll-height="auto" data-kt-scroll-dependencies="#kt_aside_search, #kt_aside_footer" data-kt-scroll-wrappers="#kt_aside, #kt_aside_menu" data-kt-scroll-offset="100px">
     <div id="kt_aside_menu" class="menu menu-column menu-title-gray-600 menu-state-primary menu-state-icon-primary menu-state-bullet-primary menu-icon-gray-400 menu-arrow-gray-400 fw-bold fs-6 my-auto" data-kt-menu="true">
-        <div class="menu-item py-2">
+        <div class="menu-item py-1">
             <a class="menu-link active scroll-ps" href="{{ route('dashboard') }}" title="Dashboard" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-dismiss="click" data-bs-placement="left">
                 <span class="menu-icon">
                     <!--begin::Svg Icon | path: icons/duotune/general/gen025.svg-->
@@ -16,15 +16,12 @@
                 </span>
             </a>
         </div>
-        <div data-kt-menu-trigger="click" data-kt-menu-flip="false" data-kt-menu-placement="left-start" class="menu-item py-2">
+        <div data-kt-menu-trigger="click" data-kt-menu-flip="false" data-kt-menu-placement="left-start" class="menu-item py-1">
             <span class="menu-link scroll-ps" title="MID Management" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-dismiss="click" data-bs-placement="left">
                 <span class="menu-icon">
                     <!--begin::Svg Icon | path: icons/duotune/abstract/abs037.svg-->
                     <span class="svg-icon svg-icon-1 svg-icon-lg-2x">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-                            <path opacity="0.3" d="M2.10001 10C3.00001 5.6 6.69998 2.3 11.2 2L8.79999 4.39999L11.1 7C9.60001 7.3 8.30001 8.19999 7.60001 9.59999L4.5 12.4L2.10001 10ZM19.3 11.5L16.4 14C15.7 15.5 14.4 16.6 12.7 16.9L15 19.5L12.6 21.9C17.1 21.6 20.8 18.2 21.7 13.9L19.3 11.5Z" fill="black" />
-                            <path d="M13.8 2.09998C18.2 2.99998 21.5 6.69998 21.8 11.2L19.4 8.79997L16.8 11C16.5 9.39998 15.5 8.09998 14 7.39998L11.4 4.39998L13.8 2.09998ZM12.3 19.4L9.69998 16.4C8.29998 15.7 7.3 14.4 7 12.8L4.39999 15.1L2 12.7C2.3 17.2 5.7 20.9 10 21.8L12.3 19.4Z" fill="black" />
-                        </svg>
+                        <img src="https://img.icons8.com/external-itim2101-fill-itim2101/35/92929f/external-payment-method-accounting-solid-itim2101-fill-itim2101.png"/>
                     </span>
                     <!--end::Svg Icon-->
                 </span>
@@ -62,7 +59,7 @@
             </div>
         </div>
 
-        <div class="menu-item py-2">
+        <div class="menu-item py-1">
             <a class="menu-link scroll-ps" href="#" title="iFrame Generator" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-dismiss="click" data-bs-placement="left">
                 <span class="menu-icon">
                     <!--begin::Svg Icon | path: icons/duotune/general/gen025.svg-->
@@ -77,7 +74,7 @@
             </a>
         </div>
 
-        <div data-kt-menu-trigger="click" data-kt-menu-flip="false" data-kt-menu-placement="left-start" class="menu-item py-2">
+        <div data-kt-menu-trigger="click" data-kt-menu-flip="false" data-kt-menu-placement="left-start" class="menu-item py-1">
             <span class="menu-link scroll-ps" title="Reports" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-dismiss="click" data-bs-placement="left">
                 <span class="menu-icon">
                     <!--begin::Svg Icon | path: icons/duotune/abstract/abs037.svg-->
@@ -123,7 +120,7 @@
             </div>
         </div>
 
-        <div data-kt-menu-trigger="click" data-kt-menu-flip="false" data-kt-menu-placement="left-start" class="menu-item py-2">
+        <div data-kt-menu-trigger="click" data-kt-menu-flip="false" data-kt-menu-placement="left-start" class="menu-item py-1">
             <span class="menu-link scroll-ps" title="Payout" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-dismiss="click" data-bs-placement="left">
                 <span class="menu-icon">
                     <!--begin::Svg Icon | path: icons/duotune/general/gen014.svg-->
