@@ -19,6 +19,8 @@
         <link href="{{ storage_asset('theme/assets/css/style.dark.bundle.rtl.css') }}" rel="stylesheet" type="text/css" />
         <!--end::Global Stylesheets Bundle-->
 
+        <link href="{{ storage_asset('theme/assets/css/custom.css') }}" rel="stylesheet" type="text/css" />
+
         @yield('customeStyle')
         <?php
         $currentPageURL = URL::current();
