@@ -46,6 +46,7 @@ class Application extends Model
         'previous_processing_statement',
         'owner_personal_bank_statement',
         'extra_document',
+        'wl_extra_document',
         'is_completed',
         'is_reassign',
         'reason_reassign',

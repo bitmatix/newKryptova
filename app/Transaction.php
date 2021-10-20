@@ -5194,7 +5194,13 @@ SQL;
 
     public function latest10TransactionsForAgent()
     {
-        $userIds = \DB::table('users')->where('agent_id', auth()->guard('agentUser')->user()->id)->pluck('id');
+        if(auth()->guard('agentUser')->user()->main_agent_id == 0){
+            $agentId = auth()->guard('agentUser')->user()->id;
+        }else{
+            $agentId = auth()->guard('agentUser')->user()->main_agent_id;
+        }
+        
+        $userIds = \DB::table('users')->where('agent_id', $agentId)->pluck('id');
         $data = static::select('applications.business_name', 'transactions.*', 'middetails.bank_name')
             ->join('applications', 'applications.user_id', 'transactions.user_id')
             ->join('middetails', 'middetails.id', 'transactions.payment_gateway_id')
@@ -5217,7 +5223,13 @@ SQL;
             _WriteLogsInFile($getDatabaseName . " connection from RP transactions", 'slave_connection');
         }
 
-        $userIds = \DB::table('users')->where('agent_id', auth()->guard('agentUser')->user()->id)->pluck('id');
+        if(auth()->guard('agentUser')->user()->main_agent_id == 0){
+            $agentId = auth()->guard('agentUser')->user()->id;
+        }else{
+            $agentId = auth()->guard('agentUser')->user()->main_agent_id;
+        }
+
+        $userIds = \DB::table('users')->where('agent_id', $agentId)->pluck('id');
 
         $data = static::select('applications.business_name', 'transactions.id', 'transactions.email', 'transactions.order_id', 'transactions.amount', 'transactions.currency', 'transactions.status', 'transactions.card_type', 'middetails.bank_name', 'transactions.first_name', 'transactions.last_name')
             ->join('applications', 'applications.user_id', 'transactions.user_id')
@@ -5290,7 +5302,13 @@ SQL;
             _WriteLogsInFile($getDatabaseName . " connection from RP transactions", 'slave_connection');
         }
 
-        $userIds = \DB::table('users')->where('agent_id', auth()->guard('agentUser')->user()->id)->pluck('id');
+        if(auth()->guard('agentUser')->user()->main_agent_id == 0){
+            $agentId = auth()->guard('agentUser')->user()->id;
+        }else{
+            $agentId = auth()->guard('agentUser')->user()->main_agent_id;
+        }
+
+        $userIds = \DB::table('users')->where('agent_id', $agentId)->pluck('id');
 
         $data = static::select('applications.business_name', 'transactions.*', 'middetails.bank_name')
             ->join('applications', 'applications.user_id', 'transactions.user_id')
@@ -5373,7 +5391,13 @@ SQL;
             _WriteLogsInFile($getDatabaseName . " connection from RP transactions", 'slave_connection');
         }
 
-        $userIds = \DB::table('users')->where('agent_id', auth()->guard('agentUser')->user()->id)->pluck('id');
+        if(auth()->guard('agentUser')->user()->main_agent_id == 0){
+            $agentId = auth()->guard('agentUser')->user()->id;
+        }else{
+            $agentId = auth()->guard('agentUser')->user()->main_agent_id;
+        }
+
+        $userIds = \DB::table('users')->where('agent_id', $agentId)->pluck('id');
 
         $data = static::select('applications.business_name', 'transactions.*', 'transactions_document_upload.files as transactions_document_upload_files', 'middetails.bank_name')
             ->join('applications', 'applications.user_id', 'transactions.user_id')
@@ -5459,7 +5483,13 @@ SQL;
             _WriteLogsInFile($getDatabaseName . " connection from RP transactions", 'slave_connection');
         }
 
-        $userIds = \DB::table('users')->where('agent_id', auth()->guard('agentUser')->user()->id)->pluck('id');
+        if(auth()->guard('agentUser')->user()->main_agent_id == 0){
+            $agentId = auth()->guard('agentUser')->user()->id;
+        }else{
+            $agentId = auth()->guard('agentUser')->user()->main_agent_id;
+        }
+
+        $userIds = \DB::table('users')->where('agent_id', $agentId)->pluck('id');
 
         $data = static::select('applications.business_name', 'transactions.*', 'transactions_document_upload.files as transactions_document_upload_files', 'middetails.bank_name')
             ->join('applications', 'applications.user_id', 'transactions.user_id')
@@ -5544,7 +5574,13 @@ SQL;
             _WriteLogsInFile($getDatabaseName . " connection from RP transactions", 'slave_connection');
         }
 
-        $userIds = \DB::table('users')->where('agent_id', auth()->guard('agentUser')->user()->id)->pluck('id');
+        if(auth()->guard('agentUser')->user()->main_agent_id == 0){
+            $agentId = auth()->guard('agentUser')->user()->id;
+        }else{
+            $agentId = auth()->guard('agentUser')->user()->main_agent_id;
+        }
+
+        $userIds = \DB::table('users')->where('agent_id', $agentId)->pluck('id');
 
         $data = static::select('applications.business_name', 'transactions.*', 'transactions_document_upload.files as transactions_document_upload_files', 'middetails.bank_name')
             ->join('applications', 'applications.user_id', 'transactions.user_id')
@@ -5926,6 +5962,674 @@ SQL;
         // ->toSql();
         // echo $data;exit();
         //->get()->toArray();
+
+        return $data;
+    }
+
+    public function getCardSummaryReport($input)
+    {
+        $slave_connection = env('SLAVE_DB_CONNECTION_NAME', '');
+
+        if (!empty($slave_connection)) {
+            \DB::setDefaultConnection($slave_connection);
+            $getDatabaseName = \DB::connection()->getDatabaseName();
+            _WriteLogsInFile($getDatabaseName . " connection from admin card summary report", 'slave_connection');
+        }
+
+        $payment_gateway_id = (env('PAYMENT_GATEWAY_ID')) ? explode(",", env('PAYMENT_GATEWAY_ID')) : [];
+
+        $data = static::select(
+            'card_type',
+            DB::raw("SUM(IF(transactions.status = '1', 1, 0)) as success_count"),
+            DB::raw("SUM(IF(transactions.status = '1', transactions.amount, 0.00)) AS success_amount"),
+            DB::raw("(SUM(IF(transactions.status = '1', 1, 0)*100)/SUM(IF(transactions.status = '1' OR transactions.status = '0', 1, 0))) AS success_percentage"),
+            DB::raw("SUM(IF(transactions.status = '0', 1, 0)) as declined_count"),
+            DB::raw("SUM(IF(transactions.status = '0' , transactions.amount,0.00 )) AS declined_amount"),
+            DB::raw("(SUM(IF(transactions.status = '0', 1, 0)*100)/SUM(IF(transactions.status = '1' OR transactions.status = '0', 1, 0))) AS declined_percentage"),
+
+            DB::raw("SUM(IF(transactions.status = '1' AND transactions.chargebacks = '1' AND transactions.chargebacks_remove = '0', 1, 0)) chargebacks_count"),
+            DB::raw("SUM(IF(transactions.status = '1' AND transactions.chargebacks = '1' AND transactions.chargebacks_remove = '0', amount, 0)) AS chargebacks_amount"),
+            DB::raw("(SUM(IF(transactions.status = '1' AND transactions.chargebacks = '1' AND transactions.chargebacks_remove = '0', 1, 0))*100/SUM(IF(transactions.status = '1', 1, 0))) AS chargebacks_percentage"),
+
+            DB::raw("SUM(IF(transactions.status = '1' AND transactions.refund = '1' AND transactions.refund_remove='0', 1, 0)) refund_count"),
+            DB::raw("SUM(IF(transactions.status = '1' AND transactions.refund = '1' AND transactions.refund_remove='0', amount, 0)) AS refund_amount"),
+            DB::raw("(SUM(IF(transactions.status = '1' AND transactions.refund = '1' AND transactions.refund_remove='0', 1, 0))/SUM(IF(transactions.status = '1', 1, 0))) AS refund_percentage"),
+
+            DB::raw("SUM(IF(transactions.status = '1' AND transactions.is_flagged = '1' AND transactions.is_flagged_remove= '0', 1, 0)) AS flagged_count"),
+            DB::raw("SUM(IF(transactions.status = '1' AND transactions.is_flagged = '1' AND transactions.is_flagged_remove= '0', amount, 0)) AS flagged_amount"),
+            DB::raw("(SUM(IF(transactions.status = '1' AND transactions.is_flagged = '1' AND transactions.is_flagged_remove= '0', 1, 0))/SUM(IF(transactions.status = '1', 1, 0))) AS flagged_percentage"),
+
+            DB::raw("SUM(IF(transactions.status = '1' AND transactions.is_retrieval  = '1' AND transactions.is_retrieval_remove= '0', 1, 0)) retrieval_count"),
+            DB::raw("SUM(IF(transactions.status = '1' AND transactions.is_retrieval  = '1' AND transactions.is_retrieval_remove= '0', amount, 0)) AS retrieval_amount"),
+            DB::raw("(SUM(IF(transactions.status = '1' AND transactions.is_retrieval = '1' AND transactions.is_retrieval_remove= '0', 1, 0)*100)/SUM(IF(transactions.status = '1', 1, 0))) retrieval_percentage"),
+
+            DB::raw("SUM(IF(transactions.status = '5', 1, 0)) AS block_count"),
+            DB::raw("SUM(IF(transactions.status = '5', transactions.amount, 0.00)) AS block_amount"),
+            DB::raw("(SUM(IF(transactions.status = '5', 1, 0))/SUM(IF(transactions.status = '1', 1, 0))) AS block_percentage")
+        )->whereNotIn('transactions.payment_gateway_id', $payment_gateway_id);
+
+        if (isset($input['user_id']) && $input['user_id'] != null) {
+            $data = $data->where('user_id', $input['user_id']);
+        }
+
+        if (isset($input['card_type']) && $input['card_type'] != null) {
+            $data = $data->where('card_type', $input['card_type']);
+        }
+
+        if ((isset($input['start_date']) && $input['start_date'] != '') && (isset($input['end_date']) && $input['end_date'] != '')) {
+            $start_date = date('Y-m-d 00:00:00', strtotime($input['start_date']));
+            $end_date = date('Y-m-d 23:59:59', strtotime($input['end_date']));
+
+            $data = $data->where('transactions.transaction_date', '>=', $start_date)
+                ->where('transactions.transaction_date', '<=', $end_date);
+        }
+
+        if ((!isset($_GET['for']) && !isset($_GET['end_date'])) || (isset($_GET['for']) && $_GET['for'] == 'Daily')) {
+            $data = $data->where('transactions.transaction_date', '>=', date('Y-m-d 00:00:00'))
+                ->where('transactions.transaction_date', '<=', date('Y-m-d 23:59:59'));
+        }
+
+        if (isset($input['for']) && $input['for'] == 'Weekly') {
+            $data = $data->where('transactions.transaction_date', '>=', date('Y-m-d 00:00:00', strtotime('-6 days')))
+                ->where('transactions.transaction_date', '<=', date('Y-m-d 23:59:59'));
+        }
+
+        if (isset($input['for']) && $input['for'] == 'Monthly') {
+            $data = $data->where('transactions.transaction_date', '>=', date('Y-m-d 00:00:00', strtotime('-30 days')))
+                ->where('transactions.transaction_date', '<=', date('Y-m-d 23:59:59'));
+        }
+
+        $data = $data->groupBy('card_type')->orderBy('success_amount', 'desc')->get()->toArray();
+        // ->toSql();
+        // echo $data;exit();
+        //->get()->toArray();
+
+        return $data;
+    }
+
+    public function getPaymentStatusReport($input)
+    {
+        $slave_connection = env('SLAVE_DB_CONNECTION_NAME', '');
+        $payment_gateway_id = (env('PAYMENT_GATEWAY_ID')) ? explode(",", env('PAYMENT_GATEWAY_ID')) : [];
+
+        if (!empty($slave_connection)) {
+            \DB::setDefaultConnection($slave_connection);
+            $getDatabaseName = \DB::connection()->getDatabaseName();
+            _WriteLogsInFile($getDatabaseName . " connection from admin payment status report", 'slave_connection');
+        }
+        $data = static::select(
+            'transactions.user_id',
+            'transactions.currency',
+            'applications.business_name',
+            DB::raw("SUM(IF(transactions.status = '1', 1, 0)) as success_count"),
+            DB::raw("SUM(IF(transactions.status = '1', transactions.amount, 0.00)) AS success_amount"),
+            DB::raw("(SUM(IF(transactions.status = '1', 1, 0)*100)/SUM(IF(transactions.status = '1' OR transactions.status = '0', 1, 0))) AS success_percentage"),
+            DB::raw("SUM(IF(transactions.status = '0', 1, 0)) as declined_count"),
+            DB::raw("SUM(IF(transactions.status = '0' , transactions.amount,0.00 )) AS declined_amount"),
+            DB::raw("(SUM(IF(transactions.status = '0', 1, 0)*100)/SUM(IF(transactions.status = '1' OR transactions.status = '0', 1, 0))) AS declined_percentage"),
+
+            DB::raw("SUM(IF(transactions.status = '1' AND transactions.chargebacks = '1' AND transactions.chargebacks_remove = '0', 1, 0)) chargebacks_count"),
+            DB::raw("SUM(IF(transactions.status = '1' AND transactions.chargebacks = '1' AND transactions.chargebacks_remove = '0', amount, 0)) AS chargebacks_amount"),
+            DB::raw("(SUM(IF(transactions.status = '1' AND transactions.chargebacks = '1' AND transactions.chargebacks_remove = '0', 1, 0))*100/SUM(IF(transactions.status = '1', 1, 0))) AS chargebacks_percentage"),
+
+            DB::raw("SUM(IF(transactions.status = '1' AND transactions.refund = '1' AND transactions.refund_remove='0', 1, 0)) refund_count"),
+            DB::raw("SUM(IF(transactions.status = '1' AND transactions.refund = '1' AND transactions.refund_remove='0', amount, 0)) AS refund_amount"),
+            DB::raw("(SUM(IF(transactions.status = '1' AND transactions.refund = '1' AND transactions.refund_remove='0', 1, 0))/SUM(IF(transactions.status = '1', 1, 0))) AS refund_percentage"),
+
+            DB::raw("SUM(IF(transactions.status = '1' AND transactions.is_flagged = '1' AND transactions.is_flagged_remove= '0', 1, 0)) AS flagged_count"),
+            DB::raw("SUM(IF(transactions.status = '1' AND transactions.is_flagged = '1' AND transactions.is_flagged_remove= '0', amount, 0)) AS flagged_amount"),
+            DB::raw("(SUM(IF(transactions.status = '1' AND transactions.is_flagged = '1' AND transactions.is_flagged_remove= '0', 1, 0))/SUM(IF(transactions.status = '1', 1, 0))) AS flagged_percentage"),
+
+            DB::raw("SUM(IF(transactions.status = '1' AND transactions.is_retrieval  = '1' AND transactions.is_retrieval_remove= '0', 1, 0)) retrieval_count"),
+            DB::raw("SUM(IF(transactions.status = '1' AND transactions.is_retrieval  = '1' AND transactions.is_retrieval_remove= '0', amount, 0)) AS retrieval_amount"),
+            DB::raw("(SUM(IF(transactions.status = '1' AND transactions.is_retrieval = '1' AND transactions.is_retrieval_remove= '0', 1, 0)*100)/SUM(IF(transactions.status = '1', 1, 0))) retrieval_percentage"),
+
+            DB::raw("SUM(IF(transactions.status = '5', 1, 0)) AS block_count"),
+            DB::raw("SUM(IF(transactions.status = '5', transactions.amount, 0.00)) AS block_amount"),
+            DB::raw("(SUM(IF(transactions.status = '5', 1, 0))/SUM(IF(transactions.status = '1', 1, 0))) AS block_percentage"),
+
+        )->leftJoin('applications', 'applications.user_id', '=', 'transactions.user_id')
+        ->whereNotIn('transactions.payment_gateway_id', $payment_gateway_id);
+
+        if (isset($input['user_id']) && $input['user_id'] != null) {
+            $data = $data->where('transactions.user_id', $input['user_id']);
+        }
+
+        if (isset($input['currency']) && $input['currency'] != null) {
+            $data = $data->where('transactions.currency', $input['currency']);
+        }
+
+        if ((isset($input['start_date']) && $input['start_date'] != '') && (isset($input['end_date']) && $input['end_date'] != '')) {
+            $start_date = date('Y-m-d 00:00:00', strtotime($input['start_date']));
+            $end_date = date('Y-m-d 23:59:59', strtotime($input['end_date']));
+
+            $data = $data->where('transactions.transaction_date', '>=', $start_date)
+                ->where('transactions.transaction_date', '<=', $end_date);
+        }
+
+        if ((!isset($_GET['for']) && !isset($_GET['end_date'])) || (isset($_GET['for']) && $_GET['for'] == 'Daily')) {
+
+            $data = $data->where('transactions.transaction_date', '>=', date('Y-m-d 00:00:00'))
+                ->where('transactions.transaction_date', '<=', date('Y-m-d 23:59:59'));
+        }
+
+        if (isset($input['for']) && $input['for'] == 'Weekly') {
+            $data = $data->where('transactions.transaction_date', '>=', date('Y-m-d 00:00:00', strtotime('-6 days')))
+                ->where('transactions.transaction_date', '<=', date('Y-m-d 23:59:59'));
+        }
+
+        if (isset($input['for']) && $input['for'] == 'Monthly') {
+            $data = $data->where('transactions.transaction_date', '>=', date('Y-m-d 00:00:00', strtotime('-30 days')))
+                ->where('transactions.transaction_date', '<=', date('Y-m-d 23:59:59'));
+        }
+
+        $data = $data->groupBy('transactions.user_id', 'transactions.currency')->orderBy('success_amount', 'desc')->get()->toArray();
+
+        return $data;
+    }
+
+    public function getAllMerchantTransactionDataWLAgent($input, $noList)
+    {
+        $slave_connection = env('SLAVE_DB_CONNECTION_NAME', '');
+        $payment_gateway_id = (env('PAYMENT_GATEWAY_ID')) ? explode(",", env('PAYMENT_GATEWAY_ID')) : [];
+
+        if (!empty($slave_connection)) {
+            \DB::setDefaultConnection($slave_connection);
+            $getDatabaseName = \DB::connection()->getDatabaseName();
+            _WriteLogsInFile($getDatabaseName . " connection from RP transactions", 'slave_connection');
+        }
+
+        $userIds = \DB::table('users')
+            ->where('is_white_label','1')
+            ->where('white_label_agent_id', auth()->guard('agentUserWL')->user()->id)
+            ->pluck('id');
+
+        $data = static::select('applications.business_name', 'transactions.id', 'transactions.email', 'transactions.order_id', 'transactions.amount', 'transactions.currency', 'transactions.status', 'transactions.card_type', 'middetails.bank_name', 'transactions.first_name', 'transactions.last_name')
+            ->join('applications', 'applications.user_id', 'transactions.user_id')
+            ->join('middetails', 'middetails.id', 'transactions.payment_gateway_id')
+            ->whereNotIn('transactions.payment_gateway_id', $payment_gateway_id)
+            ->whereIn('transactions.user_id', $userIds)
+            ->orderBy('transactions.id', 'DESC');
+
+        if (isset($input['first_name']) && $input['first_name'] != '') {
+            $data = $data->where('transactions.first_name',  'like', '%' . $input['first_name'] . '%');
+        }
+
+        if (isset($input['last_name']) && $input['last_name'] != '') {
+            $data = $data->where('transactions.last_name',  'like', '%' . $input['last_name'] . '%');
+        }
+
+        if (isset($input['status']) && $input['status'] != '') {
+            $data = $data->where('transactions.status', $input['status']);
+        }
+
+        if (isset($input['order_id']) && $input['order_id'] != '') {
+            $data = $data->where('transactions.order_id', $input['order_id']);
+        }
+
+        if (isset($input['company_name']) && $input['company_name'] != '') {
+            $data = $data->where('transactions.user_id',  $input['company_name']);
+        }
+
+        if ((isset($input['start_date']) && $input['start_date'] != '') &&  (isset($input['end_date']) && $input['end_date'] != '')) {
+            $start_date = $input['start_date'];
+            $end_date = $input['end_date'];
+
+            $data = $data->where(DB::raw('DATE(transactions.created_at)'), '>=', $start_date)
+                ->where(DB::raw('DATE(transactions.created_at)'), '<=', $end_date);
+        } else if ((isset($input['start_date']) && $input['start_date'] != '') || (isset($input['end_date']) && $input['end_date'] == '')) {
+            $start_date = $input['start_date'];
+            $data = $data->where(DB::raw('DATE(transactions.created_at)'), '>=', $start_date);
+        } else if ((isset($input['start_date']) && $input['start_date'] == '') || (isset($input['end_date']) && $input['end_date'] != '')) {
+            $end_date = date('Y-m-d', strtotime($input['end_date']));
+            $data = $data->where(DB::raw('DATE(transactions.created_at)'), '<=', $end_date);
+        }
+
+        $data = $data->paginate($noList);
+
+        return $data;
+    }
+
+    public function getMerchantCryptoTransactionDataWLAgent($input, $noList)
+    {
+        $slave_connection = env('SLAVE_DB_CONNECTION_NAME', '');
+        $payment_gateway_id = (env('PAYMENT_GATEWAY_ID')) ? explode(",", env('PAYMENT_GATEWAY_ID')) : [];
+
+        if (!empty($slave_connection)) {
+            \DB::setDefaultConnection($slave_connection);
+            $getDatabaseName = \DB::connection()->getDatabaseName();
+            _WriteLogsInFile($getDatabaseName . " connection from RP transactions", 'slave_connection');
+        }
+
+        $userIds = \DB::table('users')
+            ->where('is_white_label','1')
+            ->where('white_label_agent_id', auth()->guard('agentUserWL')->user()->id)
+            ->pluck('id');
+
+        $data = static::select('applications.business_name', 'transactions.id', 'transactions.email', 'transactions.order_id', 'transactions.amount', 'transactions.currency', 'transactions.status', 'transactions.card_type', 'middetails.bank_name', 'transactions.first_name', 'transactions.last_name')
+            ->join('applications', 'applications.user_id', 'transactions.user_id')
+            ->join('middetails', 'middetails.id', 'transactions.payment_gateway_id')
+            ->whereNotIn('transactions.payment_gateway_id', $payment_gateway_id)
+            ->whereIn('transactions.user_id', $userIds)
+            ->where('transactions.is_transaction_type', 'CRYPTO')
+            ->orderBy('transactions.id', 'DESC');
+
+        if (isset($input['first_name']) && $input['first_name'] != '') {
+            $data = $data->where('transactions.first_name',  'like', '%' . $input['first_name'] . '%');
+        }
+
+        if (isset($input['last_name']) && $input['last_name'] != '') {
+            $data = $data->where('transactions.last_name',  'like', '%' . $input['last_name'] . '%');
+        }
+
+        if (isset($input['status']) && $input['status'] != '') {
+            $data = $data->where('transactions.status', $input['status']);
+        }
+
+        if (isset($input['order_id']) && $input['order_id'] != '') {
+            $data = $data->where('transactions.order_id', $input['order_id']);
+        }
+
+        if (isset($input['company_name']) && $input['company_name'] != '') {
+            $data = $data->where('transactions.user_id',  $input['company_name']);
+        }
+
+        if ((isset($input['start_date']) && $input['start_date'] != '') &&  (isset($input['end_date']) && $input['end_date'] != '')) {
+            $start_date = $input['start_date'];
+            $end_date = $input['end_date'];
+
+            $data = $data->where(DB::raw('DATE(transactions.created_at)'), '>=', $start_date)
+                ->where(DB::raw('DATE(transactions.created_at)'), '<=', $end_date);
+        } else if ((isset($input['start_date']) && $input['start_date'] != '') || (isset($input['end_date']) && $input['end_date'] == '')) {
+            $start_date = $input['start_date'];
+            $data = $data->where(DB::raw('DATE(transactions.created_at)'), '>=', $start_date);
+        } else if ((isset($input['start_date']) && $input['start_date'] == '') || (isset($input['end_date']) && $input['end_date'] != '')) {
+            $end_date = date('Y-m-d', strtotime($input['end_date']));
+            $data = $data->where(DB::raw('DATE(transactions.created_at)'), '<=', $end_date);
+        }
+
+        $data = $data->paginate($noList);
+
+        return $data;
+    }
+
+    public function getMerchantRefundTransactionDataWLAgent($input, $noList)
+    {
+        $slave_connection = env('SLAVE_DB_CONNECTION_NAME', '');
+        $payment_gateway_id = (env('PAYMENT_GATEWAY_ID')) ? explode(",", env('PAYMENT_GATEWAY_ID')) : [];
+
+        if (!empty($slave_connection)) {
+            \DB::setDefaultConnection($slave_connection);
+            $getDatabaseName = \DB::connection()->getDatabaseName();
+            _WriteLogsInFile($getDatabaseName . " connection from RP transactions", 'slave_connection');
+        }
+
+        $userIds = \DB::table('users')
+            ->where('is_white_label','1')
+            ->where('white_label_agent_id', auth()->guard('agentUserWL')->user()->id)
+            ->pluck('id');
+
+        $data = static::select('applications.business_name', 'transactions.id', 'transactions.email', 'transactions.order_id', 'transactions.amount', 'transactions.currency', 'transactions.status', 'transactions.card_type', 'middetails.bank_name', 'transactions.first_name', 'transactions.last_name')
+            ->join('applications', 'applications.user_id', 'transactions.user_id')
+            ->join('middetails', 'middetails.id', 'transactions.payment_gateway_id')
+            ->whereNotIn('transactions.payment_gateway_id', $payment_gateway_id)
+            ->whereIn('transactions.user_id', $userIds)
+            ->where('transactions.chargebacks', '0')
+            ->where('transactions.refund', '1')
+            ->orderBy('transactions.id', 'DESC');
+
+        if (isset($input['first_name']) && $input['first_name'] != '') {
+            $data = $data->where('transactions.first_name',  'like', '%' . $input['first_name'] . '%');
+        }
+
+        if (isset($input['last_name']) && $input['last_name'] != '') {
+            $data = $data->where('transactions.last_name',  'like', '%' . $input['last_name'] . '%');
+        }
+
+        if (isset($input['status']) && $input['status'] != '') {
+            $data = $data->where('transactions.status', $input['status']);
+        }
+
+        if (isset($input['order_id']) && $input['order_id'] != '') {
+            $data = $data->where('transactions.order_id', $input['order_id']);
+        }
+
+        if (isset($input['company_name']) && $input['company_name'] != '') {
+            $data = $data->where('transactions.user_id',  $input['company_name']);
+        }
+
+        if ((isset($input['start_date']) && $input['start_date'] != '') &&  (isset($input['end_date']) && $input['end_date'] != '')) {
+            $start_date = $input['start_date'];
+            $end_date = $input['end_date'];
+
+            $data = $data->where(DB::raw('DATE(transactions.created_at)'), '>=', $start_date)
+                ->where(DB::raw('DATE(transactions.created_at)'), '<=', $end_date);
+        } else if ((isset($input['start_date']) && $input['start_date'] != '') || (isset($input['end_date']) && $input['end_date'] == '')) {
+            $start_date = $input['start_date'];
+            $data = $data->where(DB::raw('DATE(transactions.created_at)'), '>=', $start_date);
+        } else if ((isset($input['start_date']) && $input['start_date'] == '') || (isset($input['end_date']) && $input['end_date'] != '')) {
+            $end_date = date('Y-m-d', strtotime($input['end_date']));
+            $data = $data->where(DB::raw('DATE(transactions.created_at)'), '<=', $end_date);
+        }
+
+        $data = $data->paginate($noList);
+
+        return $data;
+    }
+
+    public function getMerchantChargebacksTransactionDataWLAgent($input, $noList)
+    {
+        $slave_connection = env('SLAVE_DB_CONNECTION_NAME', '');
+        $payment_gateway_id = (env('PAYMENT_GATEWAY_ID')) ? explode(",", env('PAYMENT_GATEWAY_ID')) : [];
+
+        if (!empty($slave_connection)) {
+            \DB::setDefaultConnection($slave_connection);
+            $getDatabaseName = \DB::connection()->getDatabaseName();
+            _WriteLogsInFile($getDatabaseName . " connection from RP transactions", 'slave_connection');
+        }
+
+        $userIds = \DB::table('users')
+            ->where('is_white_label','1')
+            ->where('white_label_agent_id', auth()->guard('agentUserWL')->user()->id)
+            ->pluck('id');
+
+        $data = static::select('applications.business_name', 'transactions.id', 'transactions.email', 'transactions.order_id', 'transactions.amount', 'transactions.currency', 'transactions.status', 'transactions.card_type', 'middetails.bank_name', 'transactions.first_name', 'transactions.last_name')
+            ->join('applications', 'applications.user_id', 'transactions.user_id')
+            ->join('middetails', 'middetails.id', 'transactions.payment_gateway_id')
+            ->whereNotIn('transactions.payment_gateway_id', $payment_gateway_id)
+            ->whereIn('transactions.user_id', $userIds)
+            ->where('transactions.chargebacks', '1')
+            ->orderBy('transactions.id', 'DESC');
+
+        if (isset($input['first_name']) && $input['first_name'] != '') {
+            $data = $data->where('transactions.first_name',  'like', '%' . $input['first_name'] . '%');
+        }
+
+        if (isset($input['last_name']) && $input['last_name'] != '') {
+            $data = $data->where('transactions.last_name',  'like', '%' . $input['last_name'] . '%');
+        }
+
+        if (isset($input['status']) && $input['status'] != '') {
+            $data = $data->where('transactions.status', $input['status']);
+        }
+
+        if (isset($input['order_id']) && $input['order_id'] != '') {
+            $data = $data->where('transactions.order_id', $input['order_id']);
+        }
+
+        if (isset($input['company_name']) && $input['company_name'] != '') {
+            $data = $data->where('transactions.user_id',  $input['company_name']);
+        }
+
+        if ((isset($input['start_date']) && $input['start_date'] != '') &&  (isset($input['end_date']) && $input['end_date'] != '')) {
+            $start_date = $input['start_date'];
+            $end_date = $input['end_date'];
+
+            $data = $data->where(DB::raw('DATE(transactions.created_at)'), '>=', $start_date)
+                ->where(DB::raw('DATE(transactions.created_at)'), '<=', $end_date);
+        } else if ((isset($input['start_date']) && $input['start_date'] != '') || (isset($input['end_date']) && $input['end_date'] == '')) {
+            $start_date = $input['start_date'];
+            $data = $data->where(DB::raw('DATE(transactions.created_at)'), '>=', $start_date);
+        } else if ((isset($input['start_date']) && $input['start_date'] == '') || (isset($input['end_date']) && $input['end_date'] != '')) {
+            $end_date = date('Y-m-d', strtotime($input['end_date']));
+            $data = $data->where(DB::raw('DATE(transactions.created_at)'), '<=', $end_date);
+        }
+
+        $data = $data->paginate($noList);
+
+        return $data;
+    }
+
+    public function getMerchantRetrievalTransactionDataWLAgent($input, $noList)
+    {
+        $slave_connection = env('SLAVE_DB_CONNECTION_NAME', '');
+        $payment_gateway_id = (env('PAYMENT_GATEWAY_ID')) ? explode(",", env('PAYMENT_GATEWAY_ID')) : [];
+
+        if (!empty($slave_connection)) {
+            \DB::setDefaultConnection($slave_connection);
+            $getDatabaseName = \DB::connection()->getDatabaseName();
+            _WriteLogsInFile($getDatabaseName . " connection from RP transactions", 'slave_connection');
+        }
+
+        $userIds = \DB::table('users')
+            ->where('is_white_label','1')
+            ->where('white_label_agent_id', auth()->guard('agentUserWL')->user()->id)
+            ->pluck('id');
+
+        $data = static::select('applications.business_name', 'transactions.id', 'transactions.email', 'transactions.order_id', 'transactions.amount', 'transactions.currency', 'transactions.status', 'transactions.card_type', 'middetails.bank_name', 'transactions.first_name', 'transactions.last_name')
+            ->join('applications', 'applications.user_id', 'transactions.user_id')
+            ->join('middetails', 'middetails.id', 'transactions.payment_gateway_id')
+            ->whereNotIn('transactions.payment_gateway_id', $payment_gateway_id)
+            ->whereIn('transactions.user_id', $userIds)
+            ->where('transactions.chargebacks', '0')
+            ->where('transactions.is_retrieval', '1')
+            ->orderBy('transactions.id', 'DESC');
+
+        if (isset($input['first_name']) && $input['first_name'] != '') {
+            $data = $data->where('transactions.first_name',  'like', '%' . $input['first_name'] . '%');
+        }
+
+        if (isset($input['last_name']) && $input['last_name'] != '') {
+            $data = $data->where('transactions.last_name',  'like', '%' . $input['last_name'] . '%');
+        }
+
+        if (isset($input['status']) && $input['status'] != '') {
+            $data = $data->where('transactions.status', $input['status']);
+        }
+
+        if (isset($input['order_id']) && $input['order_id'] != '') {
+            $data = $data->where('transactions.order_id', $input['order_id']);
+        }
+
+        if (isset($input['company_name']) && $input['company_name'] != '') {
+            $data = $data->where('transactions.user_id',  $input['company_name']);
+        }
+
+        if ((isset($input['start_date']) && $input['start_date'] != '') &&  (isset($input['end_date']) && $input['end_date'] != '')) {
+            $start_date = $input['start_date'];
+            $end_date = $input['end_date'];
+
+            $data = $data->where(DB::raw('DATE(transactions.created_at)'), '>=', $start_date)
+                ->where(DB::raw('DATE(transactions.created_at)'), '<=', $end_date);
+        } else if ((isset($input['start_date']) && $input['start_date'] != '') || (isset($input['end_date']) && $input['end_date'] == '')) {
+            $start_date = $input['start_date'];
+            $data = $data->where(DB::raw('DATE(transactions.created_at)'), '>=', $start_date);
+        } else if ((isset($input['start_date']) && $input['start_date'] == '') || (isset($input['end_date']) && $input['end_date'] != '')) {
+            $end_date = date('Y-m-d', strtotime($input['end_date']));
+            $data = $data->where(DB::raw('DATE(transactions.created_at)'), '<=', $end_date);
+        }
+
+        $data = $data->paginate($noList);
+
+        return $data;
+    }
+
+    public function getMerchantSuspiciousTransactionDataWLAgent($input, $noList)
+    {
+        $slave_connection = env('SLAVE_DB_CONNECTION_NAME', '');
+        $payment_gateway_id = (env('PAYMENT_GATEWAY_ID')) ? explode(",", env('PAYMENT_GATEWAY_ID')) : [];
+
+        if (!empty($slave_connection)) {
+            \DB::setDefaultConnection($slave_connection);
+            $getDatabaseName = \DB::connection()->getDatabaseName();
+            _WriteLogsInFile($getDatabaseName . " connection from RP transactions", 'slave_connection');
+        }
+
+        $userIds = \DB::table('users')
+            ->where('is_white_label','1')
+            ->where('white_label_agent_id', auth()->guard('agentUserWL')->user()->id)
+            ->pluck('id');
+
+        $data = static::select('applications.business_name', 'transactions.id', 'transactions.email', 'transactions.order_id', 'transactions.amount', 'transactions.currency', 'transactions.status', 'transactions.card_type', 'middetails.bank_name', 'transactions.first_name', 'transactions.last_name')
+            ->join('applications', 'applications.user_id', 'transactions.user_id')
+            ->join('middetails', 'middetails.id', 'transactions.payment_gateway_id')
+            ->whereNotIn('transactions.payment_gateway_id', $payment_gateway_id)
+            ->whereIn('transactions.user_id', $userIds)
+            ->where('transactions.chargebacks', '0')
+            ->where('transactions.is_flagged', '1')
+            ->where('transactions.is_flagged_remove', '0')
+            ->orderBy('transactions.id', 'DESC');
+
+        if (isset($input['first_name']) && $input['first_name'] != '') {
+            $data = $data->where('transactions.first_name',  'like', '%' . $input['first_name'] . '%');
+        }
+
+        if (isset($input['last_name']) && $input['last_name'] != '') {
+            $data = $data->where('transactions.last_name',  'like', '%' . $input['last_name'] . '%');
+        }
+
+        if (isset($input['status']) && $input['status'] != '') {
+            $data = $data->where('transactions.status', $input['status']);
+        }
+
+        if (isset($input['order_id']) && $input['order_id'] != '') {
+            $data = $data->where('transactions.order_id', $input['order_id']);
+        }
+
+        if (isset($input['company_name']) && $input['company_name'] != '') {
+            $data = $data->where('transactions.user_id',  $input['company_name']);
+        }
+
+        if ((isset($input['start_date']) && $input['start_date'] != '') &&  (isset($input['end_date']) && $input['end_date'] != '')) {
+            $start_date = $input['start_date'];
+            $end_date = $input['end_date'];
+
+            $data = $data->where(DB::raw('DATE(transactions.created_at)'), '>=', $start_date)
+                ->where(DB::raw('DATE(transactions.created_at)'), '<=', $end_date);
+        } else if ((isset($input['start_date']) && $input['start_date'] != '') || (isset($input['end_date']) && $input['end_date'] == '')) {
+            $start_date = $input['start_date'];
+            $data = $data->where(DB::raw('DATE(transactions.created_at)'), '>=', $start_date);
+        } else if ((isset($input['start_date']) && $input['start_date'] == '') || (isset($input['end_date']) && $input['end_date'] != '')) {
+            $end_date = date('Y-m-d', strtotime($input['end_date']));
+            $data = $data->where(DB::raw('DATE(transactions.created_at)'), '<=', $end_date);
+        }
+
+        $data = $data->paginate($noList);
+
+        return $data;
+    }
+
+    public function getMerchantDeclinedTransactionDataWLAgent($input, $noList)
+    {
+        $slave_connection = env('SLAVE_DB_CONNECTION_NAME', '');
+        $payment_gateway_id = (env('PAYMENT_GATEWAY_ID')) ? explode(",", env('PAYMENT_GATEWAY_ID')) : [];
+
+        if (!empty($slave_connection)) {
+            \DB::setDefaultConnection($slave_connection);
+            $getDatabaseName = \DB::connection()->getDatabaseName();
+            _WriteLogsInFile($getDatabaseName . " connection from RP transactions", 'slave_connection');
+        }
+
+        $userIds = \DB::table('users')
+            ->where('is_white_label','1')
+            ->where('white_label_agent_id', auth()->guard('agentUserWL')->user()->id)
+            ->pluck('id');
+
+        $data = static::select('applications.business_name', 'transactions.id', 'transactions.email', 'transactions.order_id', 'transactions.amount', 'transactions.currency', 'transactions.status', 'transactions.card_type', 'middetails.bank_name', 'transactions.first_name', 'transactions.last_name')
+            ->join('applications', 'applications.user_id', 'transactions.user_id')
+            ->join('middetails', 'middetails.id', 'transactions.payment_gateway_id')
+            ->whereNotIn('transactions.payment_gateway_id', $payment_gateway_id)
+            ->whereIn('transactions.user_id', $userIds)
+            ->where('transactions.status', '0')
+            ->orderBy('transactions.id', 'DESC');
+
+        if (isset($input['first_name']) && $input['first_name'] != '') {
+            $data = $data->where('transactions.first_name',  'like', '%' . $input['first_name'] . '%');
+        }
+
+        if (isset($input['last_name']) && $input['last_name'] != '') {
+            $data = $data->where('transactions.last_name',  'like', '%' . $input['last_name'] . '%');
+        }
+
+        if (isset($input['status']) && $input['status'] != '') {
+            $data = $data->where('transactions.status', $input['status']);
+        }
+
+        if (isset($input['order_id']) && $input['order_id'] != '') {
+            $data = $data->where('transactions.order_id', $input['order_id']);
+        }
+
+        if (isset($input['company_name']) && $input['company_name'] != '') {
+            $data = $data->where('transactions.user_id',  $input['company_name']);
+        }
+
+        if ((isset($input['start_date']) && $input['start_date'] != '') &&  (isset($input['end_date']) && $input['end_date'] != '')) {
+            $start_date = $input['start_date'];
+            $end_date = $input['end_date'];
+
+            $data = $data->where(DB::raw('DATE(transactions.created_at)'), '>=', $start_date)
+                ->where(DB::raw('DATE(transactions.created_at)'), '<=', $end_date);
+        } else if ((isset($input['start_date']) && $input['start_date'] != '') || (isset($input['end_date']) && $input['end_date'] == '')) {
+            $start_date = $input['start_date'];
+            $data = $data->where(DB::raw('DATE(transactions.created_at)'), '>=', $start_date);
+        } else if ((isset($input['start_date']) && $input['start_date'] == '') || (isset($input['end_date']) && $input['end_date'] != '')) {
+            $end_date = date('Y-m-d', strtotime($input['end_date']));
+            $data = $data->where(DB::raw('DATE(transactions.created_at)'), '<=', $end_date);
+        }
+
+        $data = $data->paginate($noList);
+
+        return $data;
+    }
+
+    public function getMerchantTestTransactionDataWLAgent($input, $noList)
+    {
+        $slave_connection = env('SLAVE_DB_CONNECTION_NAME', '');
+        $payment_gateway_id = (env('PAYMENT_GATEWAY_ID')) ? explode(",", env('PAYMENT_GATEWAY_ID')) : [];
+
+        if (!empty($slave_connection)) {
+            \DB::setDefaultConnection($slave_connection);
+            $getDatabaseName = \DB::connection()->getDatabaseName();
+            _WriteLogsInFile($getDatabaseName . " connection from RP transactions", 'slave_connection');
+        }
+
+        $userIds = \DB::table('users')
+            ->where('is_white_label','1')
+            ->where('white_label_agent_id', auth()->guard('agentUserWL')->user()->id)
+            ->pluck('id');
+
+        $data = static::select('applications.business_name', 'transactions.id', 'transactions.email', 'transactions.order_id', 'transactions.amount', 'transactions.currency', 'transactions.status', 'transactions.card_type', 'middetails.bank_name', 'transactions.first_name', 'transactions.last_name')
+            ->join('applications', 'applications.user_id', 'transactions.user_id')
+            ->join('middetails', 'middetails.id', 'transactions.payment_gateway_id')
+            ->whereIn('transactions.payment_gateway_id', $payment_gateway_id)
+            ->whereIn('transactions.user_id', $userIds)
+            ->orderBy('transactions.id', 'DESC');
+
+        if (isset($input['first_name']) && $input['first_name'] != '') {
+            $data = $data->where('transactions.first_name',  'like', '%' . $input['first_name'] . '%');
+        }
+
+        if (isset($input['last_name']) && $input['last_name'] != '') {
+            $data = $data->where('transactions.last_name',  'like', '%' . $input['last_name'] . '%');
+        }
+
+        if (isset($input['status']) && $input['status'] != '') {
+            $data = $data->where('transactions.status', $input['status']);
+        }
+
+        if (isset($input['order_id']) && $input['order_id'] != '') {
+            $data = $data->where('transactions.order_id', $input['order_id']);
+        }
+
+        if (isset($input['company_name']) && $input['company_name'] != '') {
+            $data = $data->where('transactions.user_id',  $input['company_name']);
+        }
+
+        if ((isset($input['start_date']) && $input['start_date'] != '') &&  (isset($input['end_date']) && $input['end_date'] != '')) {
+            $start_date = $input['start_date'];
+            $end_date = $input['end_date'];
+
+            $data = $data->where(DB::raw('DATE(transactions.created_at)'), '>=', $start_date)
+                ->where(DB::raw('DATE(transactions.created_at)'), '<=', $end_date);
+        } else if ((isset($input['start_date']) && $input['start_date'] != '') || (isset($input['end_date']) && $input['end_date'] == '')) {
+            $start_date = $input['start_date'];
+            $data = $data->where(DB::raw('DATE(transactions.created_at)'), '>=', $start_date);
+        } else if ((isset($input['start_date']) && $input['start_date'] == '') || (isset($input['end_date']) && $input['end_date'] != '')) {
+            $end_date = date('Y-m-d', strtotime($input['end_date']));
+            $data = $data->where(DB::raw('DATE(transactions.created_at)'), '<=', $end_date);
+        }
+
+        $data = $data->paginate($noList);
 
         return $data;
     }
