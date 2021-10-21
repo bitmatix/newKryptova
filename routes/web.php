@@ -13,6 +13,21 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+// test mail
+Route::get('/sendtestmail', function () {
+    $data['title'] = "This is Test Mail Tuts Make";
+    \Mail::send('emails.test', $data, function ($message) {
+
+        $TEST_EMAIL_TO        = env("TEST_EMAIL_TO");
+        $TEST_EMAIL_TO_NAME   = env("TEST_EMAIL_TO_NAME");
+        $message->to($TEST_EMAIL_TO, $TEST_EMAIL_TO_NAME)->subject('this is test bulk Mail');
+
+    });
+    // for ($i=0; $i < 5; $i++) {
+    // }
+    echo "Done";
+});
+
 Route::get('/', function () {
     return view('auth.login');
 })->name('login');
