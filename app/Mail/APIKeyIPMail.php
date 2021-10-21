@@ -28,7 +28,7 @@ class APIKeyIPMail extends Mailable
      */
     public function build()
     {
-        return $this->subject('PAYPOUND - Add IP Address For API Key')
+        return $this->subject('Kryptova - Add IP Address For API Key')
             ->markdown('emails.apiKeyIP')
             ->with('content',$this->content);
     }

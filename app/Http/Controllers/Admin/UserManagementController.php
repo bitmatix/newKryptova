@@ -459,7 +459,7 @@ class UserManagementController extends AdminController
     public function apiKeyGenerate($id)
     {
         $user = User::where('id', $id)->first();
-        $token_api = $user->createToken('paypound')->plainTextToken;
+        $token_api = $user->createToken('kryptova')->plainTextToken;
         $this->user->where('id', $id)->update(['api_key' => $token_api]);
         notificationMsg('success', 'API Key Generated Successfully!');
         return redirect()->back();
@@ -786,7 +786,7 @@ class UserManagementController extends AdminController
             $user = $this->user->where('id', $user_id)->first();
             $userT =  $user->Tokens()->first();
             if (empty($userT)) {
-                $token_api = $user->createToken('paypound')->plainTextToken;
+                $token_api = $user->createToken('kryptova')->plainTextToken;
                 $this->user->where('id', $user_id)->update(['email_verified_at' => date('Y-m-d H:i:s'), 'api_key' => $token_api]);
             }
         }
@@ -988,7 +988,7 @@ class UserManagementController extends AdminController
 
         $user = $this->user->storeData($input);
 
-        $token_api = $user->createToken('paypound')->plainTextToken;
+        $token_api = $user->createToken('kryptova')->plainTextToken;
 
         if ($input['is_whitelable'] == '1') {
             $this->user::where('id', $user->id)->update(['email_verified_at' => date('Y-m-d H:i:s'), 'api_key' => $token_api, 'is_rate_sent' => '2', 'mid' => '1']);

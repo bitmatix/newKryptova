@@ -177,7 +177,7 @@ class TestDirectApiController extends Controller
             if($getIPData->is_active == '0') {
                 return response()->json([
                     'status' => 'fail',
-                    'message' => 'Your Website URL and your IP ('.request()->ip().') is still under approval , Please contact PAYPOUND Support for more information',
+                    'message' => 'Your Website URL and your IP ('.request()->ip().') is still under approval , Please contact Kryptova Support for more information',
                     'data' => [
                         'order_id' => null,
                         'amount' => $input['amount'],

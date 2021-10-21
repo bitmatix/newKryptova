@@ -44,7 +44,7 @@ class NewBankEmail extends Notification
         return (new MailMessage)
             ->subject('Credentials Generated')
             ->greeting('Hello ,')
-            ->line('We welcome your association with PAYPOUND.')
+            ->line('We welcome your association with Kryptova.')
             ->line('Your credentials have been generated and listed as under:')
             ->line('Email: ' . $this->data['email'])
             ->line('Password: ' . $this->data['password'])

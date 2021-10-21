@@ -30,7 +30,7 @@ class AgreementSentMail extends Mailable
      */
     public function build()
     {
-        $data = $this->subject('PAYPOUND Agreement')
+        $data = $this->subject('Kryptova Agreement')
             ->markdown('emails.agreementSentMail')
             ->with(
                 [
@@ -40,7 +40,7 @@ class AgreementSentMail extends Mailable
             );
 
             if(!empty($this->details['file'])){
-                $data = $data->attach(asset($this->details['file']),['as'=>'Service_Level_Agreement_PayPound.pdf']);
+                $data = $data->attach(asset($this->details['file']),['as'=>'Service_Level_Agreement_Kryptova.pdf']);
             };
 
         return $data;

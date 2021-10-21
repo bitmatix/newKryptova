@@ -28,7 +28,7 @@ class userRegisterMail extends Mailable
      */
     public function build()
     {
-        return $this->subject('Verify your PAYPOUND account.')
+        return $this->subject('Verify your Kryptova account.')
                     ->markdown('emails.userRegisterMail')
                     ->with([
                         'token'=>$this->content['token'],

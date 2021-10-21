@@ -703,7 +703,7 @@ class User extends Authenticatable
             if ($getIPData->is_active == '0') {
                 return response()->json([
                     'status' => 'fail',
-                    'message' => 'Your Website URL and your IP (' . request()->ip() . ') is still under approval , Please contact PAYPOUND Support for more information',
+                    'message' => 'Your Website URL and your IP (' . request()->ip() . ') is still under approval , Please contact Kryptova Support for more information',
                     'customer_order_id' => request()->customer_order_id,
                 ]);
             }

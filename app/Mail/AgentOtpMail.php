@@ -30,7 +30,7 @@ class AgentOtpMail extends Mailable
      */
     public function build()
     {
-        $data = $this->subject('OTP confirmation alert for your PAYPOUND Account')
+        $data = $this->subject('OTP confirmation alert for your Kryptova Account')
                     ->markdown('emails.otp_agent')
                     ->with([
                         "title" => "OTP",

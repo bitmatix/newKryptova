@@ -74,7 +74,7 @@ class MerchantManagementController extends WLAgentUserBaseController
         
         $user = $this->user->create($input);
         
-        $token_api = $user->createToken('paypound')->plainTextToken;
+        $token_api = $user->createToken('kryptova')->plainTextToken;
 
         $this->user::where('id', $user->id)->update(['email_verified_at' => date('Y-m-d H:i:s'), 'api_key' => $token_api, 'is_rate_sent' => '2', 'mid' => '1']);
         

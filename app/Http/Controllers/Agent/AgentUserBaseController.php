@@ -206,7 +206,7 @@ class AgentUserBaseController extends Controller
             $user = $this->user->where('id', $user_id)->first();
             $userT =  $user->Tokens()->first();
             if (empty($userT)) {
-                $token_api = $user->createToken('paypound')->plainTextToken;
+                $token_api = $user->createToken('kryptova')->plainTextToken;
                 $this->user->where('id', $user_id)->update(['email_verified_at' => date('Y-m-d H:i:s'), 'api_key' => $token_api]);
             }
         }

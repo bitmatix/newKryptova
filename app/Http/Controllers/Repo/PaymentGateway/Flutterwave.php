@@ -264,11 +264,11 @@ class Flutterwave extends Controller
     //             if(isset($response['status']) && $response['status'] == 'successful') {
     //                 $input['status'] = '1';
     //                 $input['reason'] = 'Your transaction was proccessed successfully.';
-    //                 $input['descriptor'] = 'PayPound';
+    //                 $input['descriptor'] = 'Kryptova';
     //             // if transaction declined with reason
     //             } elseif (isset($verify_response['data']['status']) && $verify_response['data']['status'] == 'error') {
     //                 $input['status'] = '0';
-    //                 $input['descriptor'] = 'PayPound';
+    //                 $input['descriptor'] = 'Kryptova';
     //                 if (isset($verify_response['data']['vbvmessage']) && $verify_response['data']['vbvmessage'] != null) {
     //                     $input['reason'] = $verify_response['data']['vbvmessage'];
     //                 } elseif (isset($verify_response['data']['chargeResponseMessage']) && $verify_response['data']['chargeResponseMessage'] != null) {
@@ -280,7 +280,7 @@ class Flutterwave extends Controller
     //             } elseif (isset($verify_response['data']['status']) && $verify_response['data']['status'] == 'failed') {
                     
     //                 $input['status'] = '0';
-    //                 $input['descriptor'] = 'PayPound';
+    //                 $input['descriptor'] = 'Kryptova';
                     
     //                 if (isset($verify_response['data']['vbvmessage']) && $verify_response['data']['vbvmessage'] != null) {
     //                     $input['reason'] = $verify_response['data']['vbvmessage'];
@@ -293,13 +293,13 @@ class Flutterwave extends Controller
 
     //                 $input['status'] = '0';
     //                 $input['reason'] = $verify_response['message'];
-    //                 $input['descriptor'] = 'PayPound';
+    //                 $input['descriptor'] = 'Kryptova';
     //             // if transaction declined without reason
     //             } else {
 
     //                 $input['status'] = '0';
     //                 $input['reason'] = 'Your transaction was declined by bank';
-    //                 $input['descriptor'] = 'PayPound';
+    //                 $input['descriptor'] = 'Kryptova';
     //             }
     //             //print_r($input);exit();
     //             $transaction_response = $this->storeTransaction($input);

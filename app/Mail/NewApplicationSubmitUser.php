@@ -28,7 +28,7 @@ class NewApplicationSubmitUser extends Mailable
      */
     public function build()
     {
-        return $this->subject('Welcome to PAYPOUND')
+        return $this->subject('Welcome to Kryptova')
             ->markdown('emails.new_application_user')
             ->with([
                 'name' => $this->content['name']
