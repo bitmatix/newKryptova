@@ -2,224 +2,89 @@
 
 namespace App\Http\Controllers\Auth;
 
-use App\Http\Requests;
-use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
-use App\Bank;
-use View;
-use Redirect;
+
+use App\Jobs\SendEmailJob;
+use DB;
 use Str;
-use Auth;
-use Storage;
+use App\User;
+// use App\Agent;
+use Validator;
 use Session;
-use Maatwebsite\Excel\Facades\Excel;
-use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
+// use App\Mail\SendForgotEmailAgent;
+use App\Mail\SendForgotEmailBank;
+use App\Mail\AgentOtpMail;
+use Illuminate\Http\Request;
+use App\Http\Requests;
+use App\Http\Controllers\Controller;
+use App\Http\Controllers\BankFrontController;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use \Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Hash;
-use App\Mail\BankOtpMail;
-use App\Mail\SendForgotEmailBank;
-use Carbon\Carbon;
 
-class BankUserAuthController extends Controller
+use App\BankUsers;
+
+
+use App\Providers\RouteServiceProvider;
+use App\Application;
+
+
+
+class BankUserAuthController extends BankFrontController
 {
-    use AuthenticatesUsers;
+    // protected $redirectTo = '/bank_user/login';
 
-    /**
-     * Where to redirect users after login.
-     *
-     * @var string
-     */
-    protected $redirectTo = '/bank/login';
-
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
     public function __construct()
     {
-        $this->middleware('guest', ['except' => 'logout']);
+        //$this->middleware('bankauth');
+        // $this->middleware('guest', ['except' => 'logout']);
     }
 
-    public function getLogin()
+    public function getBankUserLogin()
     {
+        // dd(auth()->guard('bank_user')->check());
         return view('auth.bankUser.login');
     }
 
-    /**
-     * Show the application loginprocess.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function postLogin(Request $request)
+    public function postBankUserLogin(Request $request)
     {
-        $this->validate($request, [
-            'email' => 'required|email',
-            'password' => 'required',
-            'g-recaptcha-response' => 'required'
-        ]);
+    	$this->validate($request, [
+    		"email" => "required",
+    		"password" => "required|min:8",
+    	]);
 
-        $request_url = 'https://www.google.com/recaptcha/api/siteverify';
+        $bank_user = BankUsers::where('email', $request->input('email'))
+                    ->where('is_active', '1')
+                     ->first();
 
-        $request_data = [
-            'secret' => config('app.captch_secret'),
-            'response' => $request['g-recaptcha-response']
-        ];
+    	if ($bank_user && \Hash::check($request->input('password'), $bank_user->password)) {
+    		if(auth()->guard('bank_user')->attempt(['email' => $request->input('email'), 'password' => $request->input('password')])){
 
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $request_url);
-        curl_setopt($ch, CURLOPT_POST, 1);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $request_data);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+                    auth()->guard('bank_user')->attempt(['email' => $request->input('email'), 'password' => $request->input('password')]);
+                   $user = auth()->guard('bank_user')->user();
+                    return redirect()->to('/bank/dashboard');
+    			} else {
 
-        $response_body = curl_exec($ch);
+    				\Session::put('error', 'Wrong login details , Please try again');
+                    return redirect()->back();
 
-        curl_close($ch);
-
-        $response_data = json_decode($response_body, true);
-
-        if ($response_data['success'] == false) {
-            \Session::put('error', 'Recaptcha verification failed.');
-
-            return redirect()->back();
-        }
-
-        $user = Bank::where(["email" => $request->input('email')])->first();
-
-        if ($user && \Hash::check($request->input('password'), $user->password)) {
-            if ($user->is_active == '0') {
-                return back()->with('error', 'Your account is not active. Please contact administration');
-            } elseif ($user->is_otp_required == '0') {
-                auth()->guard('bankUser')->attempt(['email' => $request->input('email'), 'password' => $request->input('password')]);
-                $user = auth()->guard('bankUser')->user();
-                \Session::put('success', 'You have logged in successfully!');
-                return redirect()->route('bank.dashboard');
-            } else {
-                $response = $this->sendOtpSMS($user);
-                if ($response == true) {
-                    \Session::put('email', $request->input('email'));
-                    \Session::put('password', $request->input('password'));
-                    Session::put('success', 'Enter the OTP received on your registered email id.');
-                    return redirect()->route('bank.kryptova-otp');
-                }
-            }
-        } else {
+    		}
+    	}else {
             return back()->with('error', 'your username and password are wrong.');
         }
     }
 
-    public function sendOtpSMS($user)
-    {
-        $OTP = rand(111111, 999999);
-        $generateOTP = Bank::where(['email' => $user->email])->update(['otp' => $OTP]);
-        $message = "Use " . $OTP . " to sign in to your Kryptova CRM account. Never forward this code.";
 
-        $content = [
-            'otp' => $OTP,
-            'name' => $user->name
-        ];
-        try {
-            \Mail::to($user->email)->send(new BankOtpMail($content));
-            \Session::put('success', 'OTP has been successfully sent. Please check your registered mail.');
-        } catch (\Exception $e) {
-            //dd($e->getMessage());
-        }
 
-        return true;
-    }
-
-    public function otpform()
-    {
-        return view('auth.bankUser.otpform');
-    }
-
-    public function resendotp()
-    {
-        $user = Bank::where(['email' => \Session::get('email')])->first();
-
-        if (empty($user)) {
-            \Session::put('error', 'OTP send fail, Please try again.');
-            return redirect()->route('bank.kryptova-otp');
-        }
-
-        $OTP = rand(111111, 999999);
-        $generateOTP = Bank::where(['email' => \Session::get('email')])->update(['otp' => $OTP]);
-
-        $response = $this->sendOtpSMS($user);
-
-        // if($response->type == 'success') {
-        if ($response == true) {
-            \Session::put('success', 'OTP has been successfully sent. Please check your registered mail.');
-            return redirect()->route('bank.kryptova-otp');
-        } else {
-            \Session::put('error', 'OTP send fail, Please try again.');
-            return redirect()->route('bank.kryptova-otp');
-        }
-    }
-
-    public function checkotp(Request $request)
-    {
-        $this->validate($request, [
-            'otp' => 'required',
-            'g-recaptcha-response' => 'required'
-        ]);
-
-        $request_url = 'https://www.google.com/recaptcha/api/siteverify';
-
-        $request_data = [
-            'secret' => config('app.captch_secret'),
-            'response' => $request['g-recaptcha-response']
-        ];
-
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $request_url);
-        curl_setopt($ch, CURLOPT_POST, 1);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $request_data);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-
-        $response_body = curl_exec($ch);
-
-        curl_close($ch);
-
-        $response_data = json_decode($response_body, true);
-
-        if ($response_data['success'] == false) {
-            \Session::put('error', 'Recaptcha verification failed.');
-
-            return redirect()->back();
-        }
-
-        $userData = Bank::where(['email' => \Session::get('email')])->first();
-
-        if (isset($userData->otp) && $userData->otp != $request->otp) {
-
-            \Session::put('error', 'Wrong OTP , Please try again');
-            return redirect()->back();
-        }
-
-        if (auth()->guard('bankUser')->attempt(['email' => \Session::get('email'), 'password' => \Session::get('password')])) {
-            Bank::where(['email' => \Session::get('email')])->update(['otp' => '']);
-            $user = auth()->guard('bankUser')->user();
-            Session::put('user_name', $user->name);
-            \Session::forget('email');
-            \Session::forget('password');
-            return redirect()->route('bank.dashboard');
-        } else {
-            \Session::put('error', 'Wrong OTP , Please try again');
-            return redirect()->back();
-        }
-    }
 
     public function logout()
     {
-        auth()->guard('bankUser')->logout();
-        return redirect()->to('/bank/login');
+    	auth()->guard('bank_user')->logout();
+ 		return redirect()->to('/bank/login');
     }
-
-    public function agentForgetPassword(Request $request)
+    public function bankForgetPassword(Request $request)
     {
-        return view('auth.bankUser.password_email');
+        return view('auth.bankUser.bank_password_email');
     }
 
     public function bankForgetEmail(Request $request)
@@ -254,7 +119,7 @@ class BankUserAuthController extends Controller
             return redirect()->back();
         }
 
-        $user = Bank::where(['email' => $request->email])->first();
+        $user = BankUsers::where(['email' => $request->email])->first();
         //Check if the user exists
         if ($user == NULL) {
             return redirect()->back()->with(['error' => 'User does not exist']);
@@ -269,6 +134,12 @@ class BankUserAuthController extends Controller
         //Get the token just created above
         $tokenData = DB::table('banks_password_resets')->where('email', $request->email)->first();
         try {
+            /*$mailData = [
+                'email_to' => $request->email,
+                'init_email_class' => new SendForgotEmailBank($tokenData)
+            ];
+            dispatch(new SendEmailJob($mailData));*/
+
             \Mail::to($request->email)->send(new SendForgotEmailBank($tokenData));
             return redirect()->back()->with(['status' => 'A reset link has been sent to your email address.']);
         } catch (\Exception $e) {
@@ -278,15 +149,16 @@ class BankUserAuthController extends Controller
 
     public function bankForgetPasswordForm(Request $request, $token)
     {
-        return view('auth.bankUser.password_reset', compact('token'));
+        return view('auth.bankUser.bank_password_reset', compact('token'));
     }
 
     public function bankForgetPasswordFormPost(Request $request)
     {
+        //Validate input
         $this->validate(
             $request,
             [
-                'email' => 'required|string|email|max:255|exists:banks,email',
+                'email' => 'required|string|email|max:255|exists:bank_users,email',
                 'password' => 'required|min:8|regex:/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{6,}$/',
                 'password_confirmation' => "same:password",
                 'g-recaptcha-response' => 'required'
@@ -325,7 +197,7 @@ class BankUserAuthController extends Controller
             if (!$tokenData) {
                 return redirect()->back()->with(['error' => 'Token not found']);
             }
-            $user = Bank::where(['email' => $tokenData->email])->first();
+            $user = BankUsers::where(['email' => $tokenData->email])->first();
             // Redirect the user back if the email is invalid
             if (!$user) {
                 return redirect()->back()->with(['error' => 'Email not found']);
@@ -333,12 +205,120 @@ class BankUserAuthController extends Controller
             $user->password = \Hash::make($request->password);
             $user->update();
             //Delete the token
-            DB::table('banks_password_resets')->where('email', $user->email)->delete();
+            DB::table('agents_password_resets')->where('email', $user->email)->delete();
             Session::put('success', 'Your Password Reset Successfully');
             return redirect()->to('/bank/login');
         } catch (Exception $e) {
             Session::put('error', 'Something went Wrong!');
             return redirect()->to('/bank/login');
+        }
+    }
+
+    public function otpform()
+    {
+        return view('auth.bankUser.otpform');
+    }
+
+    public function sendOtpSMS($user)
+    {
+        $OTP = rand(111111, 999999);
+        $generateOTP = Agent::where(['email' => $user->email])->update(['login_otp' => $OTP]);
+        $message = "Use " . $OTP . " to sign in to your PAYSTUDIO CRM account. Never forward this code.";
+
+        $content = [
+            'otp' => $OTP,
+            'name' => $user->name
+        ];
+        try {
+            /*$mailData = [
+                'email_to' => $user->email,
+                'init_email_class' => new AgentOtpMail($content)
+            ];
+            dispatch(new SendEmailJob($mailData));*/
+
+            \Mail::to($user->email)->send(new AgentOtpMail($content));
+            \Session::put('success', 'OTP has been successfully sent. Please check your registered mail.');
+        } catch (\Exception $e) {
+            //dd($e->getMessage());
+        }
+
+        return true;
+    }
+
+    public function resendotp()
+    {
+        $user = Agent::where(['email' => \Session::get('email')])->first();
+
+        if (empty($user)) {
+            \Session::put('error', 'OTP send fail, Please try again.');
+            return redirect()->route('rp.paystudio-otp');
+        }
+
+        $OTP = rand(111111, 999999);
+        $generateOTP = Agent::where(['email' => \Session::get('email')])->update(['login_otp' => $OTP]);
+
+        $response = $this->sendOtpSMS($user);
+
+        // if($response->type == 'success') {
+        if ($response == true) {
+            \Session::put('success', 'OTP has been successfully sent. Please check your registered mail.');
+            return redirect()->route('rp.paystudio-otp');
+        } else {
+            \Session::put('error', 'OTP send fail, Please try again.');
+            return redirect()->route('rp.paystudio-otp');
+        }
+    }
+
+    public function checkotp(Request $request)
+    {
+        $this->validate($request, [
+            'otp' => 'required',
+            'g-recaptcha-response' => 'required'
+        ]);
+
+        $request_url = 'https://www.google.com/recaptcha/api/siteverify';
+
+        $request_data = [
+            'secret' => config('app.captch_secret'),
+            'response' => $request['g-recaptcha-response']
+        ];
+
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $request_url);
+        curl_setopt($ch, CURLOPT_POST, 1);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $request_data);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+        $response_body = curl_exec($ch);
+
+        curl_close($ch);
+
+        $response_data = json_decode($response_body, true);
+
+        if ($response_data['success'] == false) {
+            \Session::put('error', 'Recaptcha verification failed.');
+
+            return redirect()->back();
+        }
+
+        $userData = Agent::where(['email' => \Session::get('email')])->first();
+
+        if (isset($userData->login_otp) && $userData->login_otp != $request->otp) {
+
+            \Session::put('error', 'Wrong OTP , Please try again');
+            return redirect()->back();
+        }
+
+        if (auth()->guard('agentUser')->attempt(['email' => \Session::get('email'), 'password' => \Session::get('password')])) {
+            Agent::where(['email' => \Session::get('email')])->update(['login_otp' => '']);
+            $user = auth()->guard('agentUser')->user();
+            Session::put('user_name', $user->name);
+            \Session::forget('email');
+            \Session::forget('password');
+            return redirect()->route('rp.dashboard');
+        } else {
+            \Session::put('error', 'Wrong OTP , Please try again');
+            return redirect()->back();
         }
     }
 }
