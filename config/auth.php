@@ -51,7 +51,7 @@ return [
             'provider' => 'admins',
         ],
 
-        'bankUser' => [
+        'bank_user' => [
             'driver' => 'session',
             'provider' => 'bank_users',
         ],
@@ -113,7 +113,7 @@ return [
 
         'bank_users' => [
             'driver' => 'eloquent',
-            'model' => App\Bank::class,
+            'model' => App\BankUsers::class,
         ],
         
         'agent_users' => [

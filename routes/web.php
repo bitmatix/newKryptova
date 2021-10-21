@@ -36,6 +36,8 @@ Route::get('/', function () {
 Auth::routes();
 
 /*********************User Register Module Start *************************************/
+Route::get('register-verify', 'ApplyNowController@registerVerify')->name('register-verify');
+
 Route::get('registrationform', 'ApplyNowController@index')->name('registrationform');
 Route::post('apply-now', 'ApplyNowController@store')->name('applynow-store');
 Route::get('user-activate/{id}', 'ApplyNowController@verifyUserEmail')->name('user-activate');
@@ -83,3 +85,20 @@ Route::get('rp/kryptova-otp', 'Auth\AgentUserAuthController@otpform')->name('rp.
 Route::get('rp/resend-otp', 'Auth\AgentUserAuthController@resendotp')->name('rp.resend-otp');
 Route::post('rp/kryptova-otp-store', 'Auth\AgentUserAuthController@checkotp')->name('rp.kryptova-otp-store');
 /*********************Agent Routes Module End *************************************/
+
+/*********************Bank Routes Module Start *************************************/
+Route::get('bank/login', 'Auth\BankUserAuthController@getBankUserLogin')->name('bank/login');
+Route::post('bank/login', 'Auth\BankUserAuthController@postBankUserLogin')->name('bank/login');
+// Route::post('bank/register', 'Auth\BankUserAuthController@getBankUserRegister')->name('bank/register');
+Route::get('bank/logout', 'Auth\BankUserAuthController@logout')->name('bank/logout');
+
+Route::get('bank/password/reset', 'Auth\BankUserAuthController@bankForgetPassword')->name('bank-password-reset');
+Route::post('bank/password/email', 'Auth\BankUserAuthController@bankForgetEmail')->name('bank-password-email');
+Route::get('bank/password/reset/{id}', 'Auth\BankUserAuthController@bankForgetPasswordForm')->name('bank-password-reset-form');
+Route::post('bank/password/resetForm', 'Auth\BankUserAuthController@bankForgetPasswordFormPost')->name('bank-password-resetForm');
+Route::get('bank/dashboard', 'BankFrontController@dashboard')->name('bank-dashboard');
+Route::get('bank/profile', 'BankFrontController@profile')->name('bank-profile');
+Route::post('bank/bank-change-pass', 'BankFrontController@changePass')->name('bank-change-pass');
+Route::patch('bank/update-profile/{id}', 'BankFrontController@updateProfile')->name('bank-profile-update');
+Route::get('bank/applications', 'BankFrontController@applicationList')->name('bank-application-list');
+/*********************Bank Routes Module End *************************************/

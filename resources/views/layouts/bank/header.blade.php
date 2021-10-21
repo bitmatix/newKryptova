@@ -14,8 +14,9 @@
 <!--end::Heaeder menu toggle-->
 <!--begin::Header Logo-->
 <div class="header-logo me-5 me-md-10 flex-grow-1 flex-lg-grow-0">
-    <a href="{{ url('admin/dashboard') }}">
+    <a href="{{ url('bank/dashboard') }}">
         <img alt="Logo" src="{{ storage_asset('theme/assets/images/logo.png') }}" class="d-none d-lg-block" style="width:216px;" />
+        <img alt="Logo" src="{{ storage_asset('theme/assets/media/logos/logo-2.svg') }}" class="d-lg-none h-25px" />
     </a>
 </div>
 <!--end::Header Logo-->
@@ -28,12 +29,12 @@
             <!--begin::Menu-->
             <div class="menu menu-lg-rounded menu-column menu-lg-row menu-state-bg menu-title-gray-700 menu-state-icon-primary menu-state-bullet-primary menu-arrow-gray-400 fw-bold my-5 my-lg-0 align-items-stretch" id="#kt_header_menu" data-kt-menu="true">
                 <div class="menu-item me-lg-1">
-                    <a class="menu-link {{ $pageActive == 'dashboard' ? 'active' : ''  }} py-3" href="{{ url('admin/dashboard') }}">
+                    <a class="menu-link active py-3" href="#">
                         <span class="menu-title">Dashboard</span>
                     </a>
                 </div>
 
-                <div data-kt-menu-trigger="click" data-kt-menu-placement="bottom-start" class="menu-item {{ $pageActive == 'users-management' ? 'here show' : ''  }} menu-lg-down-accordion me-lg-1">
+                <div data-kt-menu-trigger="click" data-kt-menu-placement="bottom-start" class="menu-item menu-lg-down-accordion me-lg-1">
                     <span class="menu-link py-3">
                         <span class="menu-title">Users Management</span>
                         <span class="menu-arrow d-lg-none"></span>
@@ -814,9 +815,9 @@
                             <!--end::Avatar-->
                             <!--begin::Username-->
                             <div class="d-flex flex-column">
-                                <div class="fw-bolder d-flex align-items-center fs-5">{{ucwords(\Session::get('user_name'))}}
-                                <span class="badge badge-light-success fw-bolder fs-8 px-2 py-1 ms-2">{{ getAdminRoleName(Auth::guard('admin')->user()->id) }}</span></div>
-                                <a href="#" class="fw-bold text-muted text-hover-primary fs-7">{{Auth::guard('admin')->user()->email}}</a>
+                                <div class="fw-bolder d-flex align-items-center fs-5">{{ucwords(Auth::guard('bank_user')->user()->bank_name)}}
+                                <span class="badge badge-light-success fw-bolder fs-8 px-2 py-1 ms-2">{{ getAdminRoleName(Auth::guard('bank_user')->user()->id) }}</span></div>
+                                <a href="#" class="fw-bold text-muted text-hover-primary fs-7">{{Auth::guard('bank_user')->user()->email}}</a>
                             </div>
                             <!--end::Username-->
                         </div>
@@ -827,11 +828,11 @@
                     <!--end::Menu separator-->
                     <!--begin::Menu item-->
                     <div class="menu-item px-5">
-                        <a href="{!! route('admin-profile') !!}" class="menu-link px-5">My Profile</a>
+                        <a href="{!! route('bank-profile') !!}" class="menu-link px-5">My Profile</a>
                     </div>
                     <!--end::Menu item-->
                     <div class="menu-item px-5">
-                        <a href="{!! URL::route('admin/logout') !!}" class="menu-link px-5">Sign Out</a>
+                        <a href="{!! URL::route('bank/logout') !!}" class="menu-link px-5">Sign Out</a>
                     </div>
                     <!--end::Menu item-->
                 </div>

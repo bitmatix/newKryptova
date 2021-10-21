@@ -138,8 +138,8 @@ class ApplyNowController extends Controller
             return redirect()->route('register')
                 ->with(['error' => 'Something wrong! try Again later.']);
         }
-        return redirect()->route('login')
-            ->with(['success' => 'Your account has been registered successfully. You will receive an email shortly to activate your account.']);
+        return redirect()->route('register-verify')
+            ->with(['success' => 'Your account has been registered successfully. <br> You will receive an email shortly to activate your account.']);
     }
 
     public function verifyUserEmail($token)
@@ -183,5 +183,10 @@ class ApplyNowController extends Controller
     public function confirmMailActive()
     {
         return view('auth.confirmMailActive');
+    }
+
+    public function registerVerify()
+    {
+        return view('auth.registerVerify');
     }
 }

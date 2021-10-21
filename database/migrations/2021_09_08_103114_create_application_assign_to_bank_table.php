@@ -13,7 +13,7 @@ class CreateApplicationAssignToBankTable extends Migration
      */
     public function up()
     {
-        Schema::create('application_assign_to_bank', function (Blueprint $table) {
+        Schema::create('application_assign_to_banks', function (Blueprint $table) {
             $table->id();
             $table->string('application_id')->nullable();
             $table->string('bank_user_id')->nullable();
@@ -30,6 +30,6 @@ class CreateApplicationAssignToBankTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('application_assign_to_bank');
+        Schema::dropIfExists('application_assign_to_banks');
     }
 }

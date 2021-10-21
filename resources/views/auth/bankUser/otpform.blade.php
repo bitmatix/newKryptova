@@ -2,10 +2,10 @@
 <html lang="en">
 	<!--begin::Head-->
 	<head>
-		<title>{{ config('app.name') }} | Merchant OTP</title>
+		<title>{{ config('app.name') }} |  Bank OTP</title>
 		<meta charset="utf-8">
 	    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-	    <meta name="description" content="{{ config('app.name') }} Merchant OTP">
+	    <meta name="description" content="{{ config('app.name') }}  Bank OTP">
 	    <meta name="author" content="{{ config('app.name') }}">
 
 		<!-- <link rel="canonical" href="https://preview.keenthemes.com/metronic8" /> -->
@@ -28,14 +28,14 @@
 				<!--begin::Content-->
 				<div class="d-flex flex-center flex-column flex-column-fluid p-10 pb-lg-20">
 					<!--begin::Logo-->
-					<a href="{{ route('login') }}" class="mb-12">
+					<a href="{{ route('bank/login') }}" class="mb-12">
 						<img alt="Logo" src="{{ storage_asset('theme/assets/images/logo.png') }}" style="width: 350px;" />
 					</a>
 					<!--end::Logo-->
 					<!--begin::Wrapper-->
 					<div class="w-lg-600px bg-body rounded shadow-sm p-10 p-lg-15 mx-auto">
 						<!--begin::Form-->
-						<form action="{{ route('kryptova-otp-store') }}" id="kt_sing_in_two_steps_form" method="post" class="form w-100" novalidate="novalidate">
+						<form action="{{ route('bank.kryptova-otp-store') }}" id="kt_sing_in_two_steps_form" method="post" class="form w-100" novalidate="novalidate">
                         {!! csrf_field() !!}
 							<!--begin::Heading-->
 							<div class="text-center mb-10">
@@ -89,23 +89,12 @@
 						<!--end::Form-->
 
 						<div class="login-otp-main">
-                            <a href="{{ route('resend-otp') }}" class="btn btn-lg btn-danger w-100 mb-5 disabled" disabled id="resendOTP">Resend OTP <span id="countdown" >60s</span></a>
+                            <a href="{{ route('bank.resend-otp') }}" class="btn btn-lg btn-danger w-100 mb-5 disabled" disabled id="resendOTP">Resend OTP <span id="countdown" >60s</span></a>
                         </div>
 					</div>
 					<!--end::Wrapper-->
 				</div>
 				<!--end::Content-->
-				<!--begin::Footer-->
-				<div class="d-flex flex-center flex-column-auto p-10">
-					<!--begin::Links-->
-					<div class="d-flex align-items-center fw-bold fs-6">
-						<a href="#" class="text-muted text-hover-primary px-2">About</a>
-						<a href="#" class="text-muted text-hover-primary px-2">Contact</a>
-						<a href="#" class="text-muted text-hover-primary px-2">Contact Us</a>
-					</div>
-					<!--end::Links-->
-				</div>
-				<!--end::Footer-->
 			</div>
 			<!--end::Authentication - Sign-in-->
 		</div>
@@ -123,22 +112,21 @@
 
 		<script type="text/javascript">
 	        var timeLeft = 60;
-	        var elem = document.getElementById('countdown');
-	        var timerId = setInterval(countdown, 1000);
-
-	        function countdown() {
-	            document.getElementById("resendOTP").disabled = true;
-	            document.getElementById("resendOTP").setAttribute("href", "javascript:void(0);");
-	            if (timeLeft == 0) {
-	                document.getElementById("resendOTP").disabled = false;
-	                document.getElementById("resendOTP").setAttribute("href", "{{ route('resend-otp') }}");
-	                elem.innerHTML = '';
-	                $('#resendOTP').removeClass('disabled');
-	            } else {
-	                elem.innerHTML = timeLeft+'s';
-	                timeLeft--;
-	            }
-	        }
+	                var elem = document.getElementById('countdown');
+	                var timerId = setInterval(countdown, 1000);
+	                function countdown() {
+	                    document.getElementById("resendOTP").disabled = true;
+	                    document.getElementById("resendOTP").setAttribute("href", "javascript:void(0);");
+	                    if (timeLeft == 0) {
+	                        document.getElementById("resendOTP").disabled = false;
+	                        document.getElementById("resendOTP").setAttribute("href", "{{ route('bank.resend-otp') }}");
+	                        elem.innerHTML = '';
+	                        $('#resendOTP').removeClass('disabled');
+	                    } else {
+	                        elem.innerHTML = timeLeft+'s';
+	                        timeLeft--;
+	                    }
+	                }
 	    </script>
 
 	    <script src="https://www.google.com/recaptcha/api.js"></script>
