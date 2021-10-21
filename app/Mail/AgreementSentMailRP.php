@@ -30,7 +30,7 @@ class AgreementSentMailRP extends Mailable
      */
     public function build()
     {
-        $data = $this->subject('PAYPOUND Agreement')
+        $data = $this->subject('Kryptova Agreement')
             ->markdown('emails.agreementSentMailRP')
             ->with(
                 [

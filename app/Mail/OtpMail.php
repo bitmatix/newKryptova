@@ -30,7 +30,7 @@ class OtpMail extends Mailable {
      * @return $this
      */
     public function build() {
-        $data = $this->subject('OTP confirmation alert for your PAYPOUND Account')
+        $data = $this->subject('OTP confirmation alert for your Kryptova Account')
                     ->markdown('emails.otp')
                     ->with(["user" => $this->user]);
                     

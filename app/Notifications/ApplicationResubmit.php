@@ -48,7 +48,7 @@ class ApplicationResubmit extends Notification
     public function toMail($notifiable)
     {
         return (new MailMessage)
-            ->subject('Incomplete Application with PAYPOUND.')
+            ->subject('Incomplete Application with Kryptova.')
             ->line('Dear Team,')
             ->line('New user has just registered on the website.')
             ->line('Pending Approval - There is an on site work for you to approve. (Please go down to select Approve or Reject)')

@@ -104,8 +104,8 @@ class Merchantapplication extends Model
             // Inser Data in users table
             $user['name'] = '';
             $user['email'] = $input['email'];
-            $user['password'] = \Hash::make('Paypound@123');
-            $user['token'] = 'Paypound@123';
+            $user['password'] = \Hash::make('Kryptova@123');
+            $user['token'] = 'Kryptova@123';
             $lastUserId = \DB::table('users')->insertGetId($user);
 
             // insert data in merchantapplications table

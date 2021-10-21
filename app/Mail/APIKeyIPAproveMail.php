@@ -28,7 +28,7 @@ class APIKeyIPAproveMail extends Mailable
      */
     public function build()
     {
-        return $this->subject('PAYPOUND - Approved IP Address and  API Key')
+        return $this->subject('Kryptova - Approved IP Address and  API Key')
             ->markdown('emails.api_key_ip_aprived')
             ->with('content',$this->content);
     }

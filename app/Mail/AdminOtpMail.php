@@ -30,7 +30,7 @@ class AdminOtpMail extends Mailable {
      * @return $this
      */
     public function build() {
-        $data = $this->subject('OTP confirmation alert for your PAYPOUND Account')
+        $data = $this->subject('OTP confirmation alert for your Kryptova Account')
                     ->markdown('emails.otp_admin')
                     ->with([
                         "title" => "OTP",
