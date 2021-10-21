@@ -36,6 +36,8 @@ Route::get('/', function () {
 Auth::routes();
 
 /*********************User Register Module Start *************************************/
+Route::get('register-verify', 'ApplyNowController@registerVerify')->name('register-verify');
+
 Route::get('registrationform', 'ApplyNowController@index')->name('registrationform');
 Route::post('apply-now', 'ApplyNowController@store')->name('applynow-store');
 Route::get('user-activate/{id}', 'ApplyNowController@verifyUserEmail')->name('user-activate');

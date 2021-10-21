@@ -16,7 +16,6 @@
 <div class="header-logo me-5 me-md-10 flex-grow-1 flex-lg-grow-0">
     <a href="{{ url('admin/dashboard') }}">
         <img alt="Logo" src="{{ storage_asset('theme/assets/images/logo.png') }}" class="d-none d-lg-block" style="width:216px;" />
-        <img alt="Logo" src="{{ storage_asset('theme/assets/media/logos/logo-2.svg') }}" class="d-lg-none h-25px" />
     </a>
 </div>
 <!--end::Header Logo-->

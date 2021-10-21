@@ -263,7 +263,11 @@ class ApplicationController extends Controller
         else
             $userID = \Auth::user()->id;
         $data = $this->application->FindDataFromUser($userID);
-        return view($this->moduleTitleP . '.status', compact('data'));
+
+        $category = Categories::orderBy("categories.id", "ASC")->pluck('name', 'id')->toArray();
+        $technologypartners = TechnologyPartner::latest()->pluck('name', 'id')->toArray();
+
+        return view($this->moduleTitleP . '.status', compact('data','category','technologypartners'));
     }
 
     public function applicationsEdit(Request $request, $id)

@@ -4,3 +4,7 @@
 		max-width: 100% !important;	
 	}
 }
+
+.text-danger {
+    color: #f1416c!important;
+}
