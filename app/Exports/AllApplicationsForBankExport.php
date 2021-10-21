@@ -44,8 +44,8 @@ class AllApplicationsForBankExport implements FromCollection, WithHeadings
 	            'applications.processing_country',
 	        )
             ->join('users', 'users.id', 'applications.user_id')
-            ->join('application_assign_to_bank','applications.id','=','application_assign_to_bank.application_id')
-            ->where('application_assign_to_bank.bank_user_id', auth()->guard('bankUser')->user()->id);
+            ->join('application_assign_to_banks','applications.id','=','application_assign_to_banks.application_id')
+            ->where('application_assign_to_banks.bank_user_id', auth()->guard('bankUser')->user()->id);
 
         if (!empty($this->id)) {
             $data = $data->whereIn('users.id', $this->id);
@@ -60,7 +60,7 @@ class AllApplicationsForBankExport implements FromCollection, WithHeadings
         }
 
         if(isset($input['status']) && $input['status'] != '') {
-            $data = $data->where('application_assign_to_bank.status',$input['status']);
+            $data = $data->where('application_assign_to_banks.status',$input['status']);
         }
 
         $data = $data->get();

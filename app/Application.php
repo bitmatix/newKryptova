@@ -141,11 +141,11 @@ class Application extends Model
     public function getBankApplications($input,$noList)
     {
         $data = static::select(
-                'users.email', 'applications.*','users.name','application_assign_to_bank.status as app_status'
+                'users.email', 'applications.*','users.name','application_assign_to_banks.status as app_status'
             )
             ->join('users', 'users.id', 'applications.user_id')
-            ->join('application_assign_to_bank','applications.id','=','application_assign_to_bank.application_id')
-            ->where('application_assign_to_bank.bank_user_id', auth()->guard('bankUser')->user()->id);
+            ->join('application_assign_to_banks','applications.id','=','application_assign_to_banks.application_id')
+            ->where('application_assign_to_banks.bank_user_id', auth()->guard('bankUser')->user()->id);
 
         if(isset($input['category_id']) && $input['category_id'] != '') {
             $data = $data->where('applications.category_id',$input['category_id']);
@@ -156,10 +156,10 @@ class Application extends Model
         }
 
         if(isset($input['status']) && $input['status'] != '') {
-            $data = $data->where('application_assign_to_bank.status',$input['status']);
+            $data = $data->where('application_assign_to_banks.status',$input['status']);
         }
 
-        $data = $data->orderBy('application_assign_to_bank.created_at', 'desc')
+        $data = $data->orderBy('application_assign_to_banks.created_at', 'desc')
             ->distinct()
             ->paginate($noList);
 
@@ -169,12 +169,12 @@ class Application extends Model
     public function getBankApplicationsApproved($input,$noList)
     {
         $data = static::select(
-                'users.email', 'applications.*','users.name','application_assign_to_bank.status as app_status'
+                'users.email', 'applications.*','users.name','application_assign_to_banks.status as app_status'
             )
             ->join('users', 'users.id', 'applications.user_id')
-            ->join('application_assign_to_bank','applications.id','=','application_assign_to_bank.application_id')
-            ->where('application_assign_to_bank.bank_user_id', auth()->guard('bankUser')->user()->id)
-            ->where('application_assign_to_bank.status', '1');
+            ->join('application_assign_to_banks','applications.id','=','application_assign_to_banks.application_id')
+            ->where('application_assign_to_banks.bank_user_id', auth()->guard('bankUser')->user()->id)
+            ->where('application_assign_to_banks.status', '1');
 
         if(isset($input['category_id']) && $input['category_id'] != '') {
             $data = $data->where('applications.category_id',$input['category_id']);
@@ -184,7 +184,7 @@ class Application extends Model
             $data = $data->where('applications.user_id',$input['user_id']);
         }
 
-        $data = $data->orderBy('application_assign_to_bank.created_at', 'desc')
+        $data = $data->orderBy('application_assign_to_banks.created_at', 'desc')
             ->distinct()
             ->paginate($noList);
 
@@ -194,12 +194,12 @@ class Application extends Model
     public function getBankApplicationsDeclined($input,$noList)
     {
         $data = static::select(
-                'users.email', 'applications.*','users.name','application_assign_to_bank.status as app_status'
+                'users.email', 'applications.*','users.name','application_assign_to_banks.status as app_status'
             )
             ->join('users', 'users.id', 'applications.user_id')
-            ->join('application_assign_to_bank','applications.id','=','application_assign_to_bank.application_id')
-            ->where('application_assign_to_bank.bank_user_id', auth()->guard('bankUser')->user()->id)
-            ->where('application_assign_to_bank.status', '2');
+            ->join('application_assign_to_banks','applications.id','=','application_assign_to_banks.application_id')
+            ->where('application_assign_to_banks.bank_user_id', auth()->guard('bankUser')->user()->id)
+            ->where('application_assign_to_banks.status', '2');
 
         if(isset($input['category_id']) && $input['category_id'] != '') {
             $data = $data->where('applications.category_id',$input['category_id']);
@@ -209,7 +209,7 @@ class Application extends Model
             $data = $data->where('applications.user_id',$input['user_id']);
         }
 
-        $data = $data->orderBy('application_assign_to_bank.created_at', 'desc')
+        $data = $data->orderBy('application_assign_to_banks.created_at', 'desc')
             ->distinct()
             ->paginate($noList);
 
@@ -219,12 +219,12 @@ class Application extends Model
     public function getBankApplicationsPending($input,$noList)
     {
         $data = static::select(
-                'users.email', 'applications.*','users.name','application_assign_to_bank.status as app_status'
+                'users.email', 'applications.*','users.name','application_assign_to_banks.status as app_status'
             )
             ->join('users', 'users.id', 'applications.user_id')
-            ->join('application_assign_to_bank','applications.id','=','application_assign_to_bank.application_id')
-            ->where('application_assign_to_bank.bank_user_id', auth()->guard('bankUser')->user()->id)
-            ->where('application_assign_to_bank.status', '0');
+            ->join('application_assign_to_banks','applications.id','=','application_assign_to_banks.application_id')
+            ->where('application_assign_to_banks.bank_user_id', auth()->guard('bankUser')->user()->id)
+            ->where('application_assign_to_banks.status', '0');
 
         if(isset($input['category_id']) && $input['category_id'] != '') {
             $data = $data->where('applications.category_id',$input['category_id']);
@@ -234,7 +234,7 @@ class Application extends Model
             $data = $data->where('applications.user_id',$input['user_id']);
         }
 
-        $data = $data->orderBy('application_assign_to_bank.created_at', 'desc')
+        $data = $data->orderBy('application_assign_to_banks.created_at', 'desc')
             ->distinct()
             ->paginate($noList);
 

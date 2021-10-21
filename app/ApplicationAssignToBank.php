@@ -9,7 +9,7 @@ class ApplicationAssignToBank extends Model
 {
     use SoftDeletes;
 
-    protected $table = 'application_assign_to_bank';
+    protected $table = 'application_assign_to_banks';
     protected $guarded = array();
 
     protected $fillable = [
