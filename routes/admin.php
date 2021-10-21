@@ -70,4 +70,17 @@ Route::group(['middleware' => 'notification_read'], function () {
   	Route::get('api-key-generate/{id}', 'Admin\UserManagementController@apiKeyGenerate')->name('api-key-generate');
   	Route::get('get-template-data', 'Admin\UserManagementController@getTemplateData')->name('get-template-data');
   	/**************** User Management Resources End  ******************/
+
+  	/****************Admin Ticket module Start ***********************************/
+  Route::get('ticket', 'Admin\TicketController@index')->name('admin.ticket');
+  Route::get('ticket/{id}', 'Admin\TicketController@show')->name('admin.ticket.show');
+  Route::get('ticket/close/{id}', 'Admin\TicketController@close')->name('admin.ticket.close');
+  Route::get('ticket/reopen/{id}', 'Admin\TicketController@reopen')->name('admin.ticket.reopen');
+  Route::delete('ticket/{id}', 'Admin\TicketController@destroy')->name('admin.ticket.destroy');
+
+
+  Route::resource('ticket/reply', 'Admin\TicketReplyController', ['as' => 'admin.ticket']);
+  //Route::post('ticket/reply','Admin\TicketReplyController@store')->name('admin.ticket-reply.store');
+  /****************Admin Ticket module End ***********************************/
+
 });

@@ -74,7 +74,7 @@
 
         <!--begin::Menu item-->
         <div class="menu-item px-3">
-            <a href="#" class="menu-link px-3">New Ticket</a>
+            <a href="{!! route('admin.ticket') !!}" class="menu-link px-3">New Ticket</a>
         </div>
         <!--end::Menu item-->
         <!--begin::Menu item-->
